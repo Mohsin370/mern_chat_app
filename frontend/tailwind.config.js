@@ -5,7 +5,17 @@ export default {
     extend: {
       fontFamily: {
         "gilroy-bold": ["Gilroy Bold"],
-        "gilroy": ["Gilroy"],
+        gilroy: ["Gilroy"],
+      },
+      colors: {
+        primary: {
+          DEFAULT: "#353535",
+          light: "#8594AB",
+        },
+        secondary: {
+          DEFAULT: "#6A4DFF",
+          light: "#9CA3AF",
+        },
       },
     },
   },
