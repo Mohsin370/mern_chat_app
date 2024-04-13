@@ -1,0 +1,32 @@
+import landingSVG from "../../assets/landing.svg";
+import Header from "../../components/header";
+import { ArrowRightIcon } from "@heroicons/react/16/solid";
+
+export default function landing() {
+  return (
+    <article className="pros lg:prose-xl">
+      <div className="flex flex-col min-h-dvh lg:w-3/4 mx-auto">
+        <Header />
+        <div className="lg:grid grid-cols-2 items-center lg:my-36">
+          <div>
+            <h1 className="font-gilroy-bold text-primary">
+              Slick Chats
+              <br />
+              Big laughs
+            </h1>
+            <p className="text-primary-light">
+              Revolutionize web connections for all. Modern design, <br /> endless connections, boundless communication.
+            </p>
+            <button className="rounded-2xl bg-violet-100 flex justify-between items-center h-20 w-52">
+              <span className="font-bold px-4">Let's Ping</span>
+              <div className="bg-secondary rounded-2xl p-7">
+                <ArrowRightIcon className=" text-white h-6" />
+              </div>
+            </button>
+          </div>
+          <img src={landingSVG} alt="landing" />
+        </div>
+      </div>
+    </article>
+  );
+}
