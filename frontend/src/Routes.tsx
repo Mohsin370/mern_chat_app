@@ -7,7 +7,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/">
       <Route index element={<Landing />} />
-      <Route path="signin" element={<Login />} />
+      <Route path="login" element={<Login />} />
       <Route path="signup" element={<Signup />} />
       <Route path="*" element={<h1>Page not found</h1>} />
     </Route>
