@@ -9,7 +9,7 @@ const login = async (req: Request, res: Response) => {
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).send({
-        success: "false",
+        success: false,
         message: "User not found",
       });
     }
@@ -17,7 +17,7 @@ const login = async (req: Request, res: Response) => {
     const userVerified = await bcrypt.compareSync(password, user.password);
     if (!userVerified) {
       return res.status(400).send({
-        success: "false",
+        success: false,
         message: "Incorrect Password",
       });
     }
@@ -30,7 +30,7 @@ const login = async (req: Request, res: Response) => {
       (err, token) => {
         if (err) throw err;
         return res.status(200).send({
-          success: "true",
+          success: true,
           message: "Login Successfully",
           token,
         });
@@ -41,13 +41,13 @@ const login = async (req: Request, res: Response) => {
 
     if (error instanceof Error) {
       return res.status(400).send({
-        success: "false",
+        success: false,
         message: error.message,
       });
     }
 
     res.status(500).send({
-      success: "false",
+      success: false,
       message: "Login Unsuccessful",
     });
   }
@@ -60,7 +60,7 @@ const signup = async (req: Request, res: Response) => {
     if (user) {
       //check for duplicates
       return res.status(400).send({
-        success: "false",
+        success: false,
         message: "User already exists",
       });
     }
@@ -74,7 +74,7 @@ const signup = async (req: Request, res: Response) => {
     let error = user.validateSync();
     if (error) {
       return res.status(400).send({
-        success: "false",
+        success: false,
         message: error.message,
       });
     }
@@ -94,7 +94,7 @@ const signup = async (req: Request, res: Response) => {
       (err, token) => {
         if (err) throw err;
         res.status(200).send({
-          success: "true",
+          success: true,
           message: "Signup Successfully",
           token,
         });
@@ -103,12 +103,12 @@ const signup = async (req: Request, res: Response) => {
   } catch (error) {
     if (error instanceof Error) {
       return res.status(400).send({
-        success: "false",
+        success: false,
         message: error.message,
       });
     }
     res.status(500).send({
-      success: "false",
+      success: false,
       message: "Signup unsuccessful",
       error,
     });
