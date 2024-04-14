@@ -4,8 +4,8 @@ export default function Signup() {
   return (
     <article className="pros prose-xl">
       <div className="lg:w-3/4 mx-auto w-11/12">
-        <div className="flex flex-wrap flex-col justify-center min-h-screen items-center ">
-          <div className="sm:shadow-xl sm:p-32 text-center rounded">
+        <div className="sm:flex flex-wrap flex-col justify-center min-h-screen items-center ">
+          <div className="py-10 sm:shadow-xl sm:p-32 text-center rounded">
             <Link to="/" className="text-5xl font-gilroy-bold cursor-pointer text-secondary">
               Ping
             </Link>
