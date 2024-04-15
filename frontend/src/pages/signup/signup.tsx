@@ -9,7 +9,7 @@ const SignupSchema = () => {
   return Yup.object().shape({
     name: Yup.string().required("Name is required").min(2, "Minimum two charachrters are required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
-    password: Yup.string().required("Password id required").min(8, "Mnimum 8 charachters are required"),
+    password: Yup.string().required("Password is required").min(8, "Mnimum 8 charachters are required"),
   });
 };
 
