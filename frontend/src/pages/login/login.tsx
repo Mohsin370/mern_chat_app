@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 const loginSchema = () => {
   return Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Email is required"),
-    password: Yup.string().required("Password id required"),
+    password: Yup.string().required("Password is required"),
   });
 };
 
