@@ -38,11 +38,11 @@ export default function Signup() {
               {({ errors, touched }) => (
                 <Form className="flex flex-wrap flex-col justify-center items-center mb-3">
                   <Field className="w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" name="name" type="text" placeholder="Full Name" />
-                  {touched.name && errors.name && <div className="w-full text-red-600 text-left">{errors.name}</div>}
+                  {touched.name && errors.name && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.name}</div>}
                   <Field className="w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" name="email" type="text" placeholder="Email" />
-                  {touched.email && errors.email && <div className="w-full text-red-600 text-left">{errors.email}</div>}
+                  {touched.email && errors.email && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.email}</div>}
                   <Field className=" w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" name="password" type="password" placeholder="Password" />
-                  {touched.password && errors.password && <div className="w-full text-red-600 text-left">{errors.password}</div>}
+                  {touched.password && errors.password && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.password}</div>}
                   <button className="bg-secondary text-white py-2 px-8 rounded-sm m-3">Register</button>
                 </Form>
               )}
