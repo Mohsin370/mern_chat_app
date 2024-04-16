@@ -2,6 +2,7 @@ import { Route, createBrowserRouter, createRoutesFromElements } from "react-rout
 import Landing from "./pages/landing/landing";
 import Login from "./pages/login/login";
 import Signup from "./pages/signup/signup";
+import Chat from "./pages/chat/chat";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -10,6 +11,7 @@ const router = createBrowserRouter(
       <Route path="login" element={<Login />} />
       <Route path="signup" element={<Signup />} />
       <Route path="*" element={<h1>Page not found</h1>} />
+      <Route path="chat" element={<Chat />} />
     </Route>
   )
 );
