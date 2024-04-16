@@ -3,10 +3,13 @@ import db from "./config/db/conn";
 import routes from "./routes";
 import dotenv from 'dotenv';
 import path from "path";
+import cors from "cors";
 
 
 const PORT: string | number = process.env.PORT || 5000;
 const app: Express = express();
+app.use(cors<Request>());
+
 
 const envFilePath = path.resolve(__dirname, "..", "..", '.env');
 dotenv.config({ path: envFilePath });
