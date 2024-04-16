@@ -1,22 +1,27 @@
 import express, { Express, Request, Response, NextFunction } from "express";
 import db from "./config/db/conn";
 import routes from "./routes";
+import dotenv from 'dotenv';
+import path from "path";
+
 
 const PORT: string | number = process.env.PORT || 5000;
 const app: Express = express();
 
+const envFilePath = path.resolve(__dirname, "..", "..", '.env');
+dotenv.config({ path: envFilePath });
+
 app.use(express.json({ limit: "50mb" }));
-require("dotenv").config();
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to chat application!");
 });
 
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin','*');
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.removeHeader('x-powered-by');
-  res.setHeader('Access-Control-Allow-Methods','POST');
-  res.setHeader('Access-Control-Allow-Headers','Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
 
