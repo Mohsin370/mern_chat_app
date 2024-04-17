@@ -4,16 +4,29 @@ import Login from "./pages/login/login";
 import Signup from "./pages/signup/signup";
 import Chat from "./pages/chat/chat";
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/">
-      <Route index element={<Landing />} />
-      <Route path="login" element={<Login />} />
-      <Route path="signup" element={<Signup />} />
-      <Route path="*" element={<h1>Page not found</h1>} />
-      <Route path="chat" element={<Chat />} />
-    </Route>
-  )
-);
+const routes = [
+  {
+    path: "/",
+    element: <Landing />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/signup",
+    element: <Signup />,
+  },
+  {
+    path: "/chat",
+    element: <Chat />,
+  },
+  {
+    path: "*",
+    element: <h1>Page not found</h1>,
+  },
+];
+
+const router = createBrowserRouter(routes);
 
 export default router;

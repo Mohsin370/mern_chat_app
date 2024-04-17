@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
-import {  SignupAPi } from "../../api/auth";
-import { IUserSignUp } from "../../interface/user";
+import { SignupAPi } from "../../api/auth";
+import { IUser } from "../../interface/user";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 
@@ -15,11 +15,11 @@ const SignupSchema = () => {
 
 export default function Signup() {
   const navigate = useNavigate();
-  const userSignUp = (values: IUserSignUp) => {
+  const userSignUp = (values: IUser) => {
     SignupAPi(values).then((res) => {
       if (res.data.success) {
         navigate("/login");
-      }else{
+      } else {
         //error notificaition
       }
     });
