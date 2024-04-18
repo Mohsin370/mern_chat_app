@@ -15,7 +15,11 @@ export default function Notification() {
   return (
     notification.show && (
       <div className="absolute top-5 right-5">
-        <div className=" bg-secondary p-5 rounded-sm text-white">
+        <div
+          className={`p-5 rounded-sm text-white ${
+            notification.type === "success" ? "bg-secondary" : "bg-red-500"
+          }`}
+        >
           {notification.message}
         </div>
       </div>
