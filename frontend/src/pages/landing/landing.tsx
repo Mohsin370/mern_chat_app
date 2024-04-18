@@ -1,15 +1,15 @@
 import { Link } from "react-router-dom";
-import landingSVG from "../../assets/landing.svg";
+import landingSVG from "../../assets/landing.png";
 import Header from "../../components/header";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 
 export default function landing() {
   return (
     <article className="pros prose-xl">
-      <div className="flex flex-col min-h-dvh lg:w-3/4 mx-auto w-11/12">
+      <div className="flex flex-col max-h-dvh lg:w-3/4 mx-auto w-11/12 overflow-hidden">
         <Header />
-        <div className="lg:grid grid-cols-2 items-center lg:my-36 md:my-10">
-          <div className="lg:block flex flex-col justify-center items-center">
+        <div className="xl:grid grid-cols-2 items-center md:my-10">
+          <div className="xl:block flex flex-col justify-center items-center">
             <h1 className="font-gilroy-bold text-primary">
               Slick Chats
               <br />
@@ -27,8 +27,8 @@ export default function landing() {
               </button>
             </Link>
           </div>
-          <div>
-            <img className="hidden sm:block" src={landingSVG} alt="landing" />
+          <div className="m-auto w-full">
+            <img className="hidden md:block m-auto" src={landingSVG} alt="landing" />
           </div>
         </div>
       </div>
