@@ -3,6 +3,7 @@ import Landing from "./pages/landing/landing";
 import Login from "./pages/login/login";
 import Signup from "./pages/signup/signup";
 import Chat from "./pages/chat/chat";
+import FallBack from "./pages/fallBack/fallBack";
 
 const routes = [
   {
@@ -23,7 +24,7 @@ const routes = [
   },
   {
     path: "*",
-    element: <h1>Page not found</h1>,
+    element: <FallBack/>,
   },
 ];
 
