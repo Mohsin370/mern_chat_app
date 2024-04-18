@@ -1,17 +1,33 @@
-import { Route, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import Landing from "./pages/landing/landing";
 import Login from "./pages/login/login";
 import Signup from "./pages/signup/signup";
+import Chat from "./pages/chat/chat";
+import FallBack from "./pages/fallBack/fallBack";
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/">
-      <Route index element={<Landing />} />
-      <Route path="login" element={<Login />} />
-      <Route path="signup" element={<Signup />} />
-      <Route path="*" element={<h1>Page not found</h1>} />
-    </Route>
-  )
-);
+const routes = [
+  {
+    path: "/",
+    element: <Landing />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/signup",
+    element: <Signup />,
+  },
+  {
+    path: "/chat",
+    element: <Chat />,
+  },
+  {
+    path: "*",
+    element: <FallBack/>,
+  },
+];
+
+const router = createBrowserRouter(routes);
 
 export default router;

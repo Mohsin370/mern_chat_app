@@ -5,6 +5,11 @@ import { LoginApi } from "../../api/auth";
 import { IUserLogin } from "../../interface/user";
 import { useNavigate } from "react-router-dom";
 
+import { NotificationContext } from "../../context/notification/notificationContext";
+import { useContext } from "react";
+import { AxiosError } from "axios";
+import { ApiResponse } from "../../types/api";
+
 const loginSchema = () => {
   return Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Email is required"),
@@ -14,14 +19,46 @@ const loginSchema = () => {
 
 export default function Login() {
   const navigate = useNavigate();
+  const { setNotification } = useContext(NotificationContext);
+
   const userLogin = (values: IUserLogin) => {
-    LoginApi(values).then((res) => {
-      if (res.data.success) {
-        localStorage.setItem("token", res.data.token);
-        // localStorage.setItem("user", JSON.stringify(res.data.user));
-        navigate("/chat");
-      }
-    });
+    LoginApi(values)
+      .then((res) => {
+        if (res.data.success) {
+          localStorage.setItem("token", res.data.token);
+          setNotification({
+            type: "success",
+            message: res.data.message,
+            show: true,
+          });
+
+          // localStorage.setItem("user", JSON.stringify(res.data.user));
+          navigate("/chat");
+        } else {
+          console.log("hello");
+          setNotification({
+            type: "error",
+            message: res.data.message,
+            show: true,
+          });
+        }
+      })
+      .catch((error: AxiosError<ApiResponse>) => {
+        if (error.response) {
+          setNotification({
+            type: "error",
+            message: error.response.data.message,
+            show: true,
+          });
+          return;
+        }
+
+        setNotification({
+          type: "error",
+          message: "Login Failed",
+          show: true,
+        });
+      });
   };
 
   return (

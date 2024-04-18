@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
-import {  SignupAPi } from "../../api/auth";
-import { IUserSignUp } from "../../interface/user";
+import { SignupAPi } from "../../api/auth";
+import { IUser } from "../../interface/user";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
+import { AxiosError } from "axios";
+import { ApiResponse } from "../../types/api";
+import { NotificationContext } from "../../context/notification/notificationContext";
+import { useContext } from "react";
 
 const SignupSchema = () => {
   return Yup.object().shape({
@@ -15,13 +19,33 @@ const SignupSchema = () => {
 
 export default function Signup() {
   const navigate = useNavigate();
-  const userSignUp = (values: IUserSignUp) => {
+  const {setNotification}  = useContext(NotificationContext);
+
+  const userSignUp = (values: IUser) => {
     SignupAPi(values).then((res) => {
       if (res.data.success) {
+        setNotification({
+          type:"success",
+          message: res.data.message,
+          show: true
+        });
         navigate("/login");
-      }else{
-        //error notificaition
       }
+    }).catch((error: AxiosError<ApiResponse>)=>{
+      if(error.response){
+        setNotification({
+          type:"error",
+          message: error.response.data.message,
+          show: true
+        });
+        return
+      }
+      setNotification({
+        type:"error",
+        message: "Sign up failed",
+        show: true
+      });
+
     });
   };
   return (
@@ -43,7 +67,7 @@ export default function Signup() {
                   {touched.email && errors.email && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.email}</div>}
                   <Field className=" w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" name="password" type="password" placeholder="Password" />
                   {touched.password && errors.password && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.password}</div>}
-                  <button className="bg-secondary text-white py-2 px-8 rounded-sm m-3">Register</button>
+                  <button className="bg-secondary text-white py-2 px-8 rounded-sm m-3" type="submit">Register</button>
                 </Form>
               )}
             </Formik>
