@@ -43,7 +43,7 @@ export default function Login() {
           });
         }
       })
-      .catch((error: Error) => {
+      .catch(() => {
         setNotification({
           type: "error",
           message: "Login Failed",

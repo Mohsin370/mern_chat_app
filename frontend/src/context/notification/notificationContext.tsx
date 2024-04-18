@@ -6,7 +6,7 @@ export type Notification = {
   show: boolean;
 };
 
-export const initNotification: Notification = {
+const initNotification: Notification = {
   message: "",
   type: "",
   show: false,
@@ -19,7 +19,7 @@ interface NotificationContextType {
 
 const defaultNotificationContext: NotificationContextType = {
   notification: initNotification,
-  setNotification: (notification: Notification) => {},
+  setNotification: () => {},
 } as NotificationContextType;
 
 export const NotificationContext = createContext<NotificationContextType>(defaultNotificationContext);
