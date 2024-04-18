@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 
 import { NotificationContext } from "../../context/notification/notificationContext";
 import { useContext } from "react";
+import { AxiosError } from "axios";
+import { ApiResponse } from "../../types/api";
 
 const loginSchema = () => {
   return Yup.object().shape({
@@ -14,8 +16,6 @@ const loginSchema = () => {
     password: Yup.string().required("Password is required"),
   });
 };
-
-//note: To be updated with initNotification
 
 export default function Login() {
   const navigate = useNavigate();
@@ -26,7 +26,6 @@ export default function Login() {
       .then((res) => {
         if (res.data.success) {
           localStorage.setItem("token", res.data.token);
-          console.log(res.data);
           setNotification({
             type: "success",
             message: res.data.message,
@@ -36,6 +35,7 @@ export default function Login() {
           // localStorage.setItem("user", JSON.stringify(res.data.user));
           navigate("/chat");
         } else {
+          console.log("hello");
           setNotification({
             type: "error",
             message: res.data.message,
@@ -43,7 +43,16 @@ export default function Login() {
           });
         }
       })
-      .catch(() => {
+      .catch((error: AxiosError<ApiResponse>) => {
+        if (error.response) {
+          setNotification({
+            type: "error",
+            message: error.response.data.message,
+            show: true,
+          });
+          return;
+        }
+
         setNotification({
           type: "error",
           message: "Login Failed",
