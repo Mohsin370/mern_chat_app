@@ -17,7 +17,7 @@ export default function FallBack() {
         </Link>
       </div>
       <div className="hidden min-h-dvh sm:flex">
-        <img className=" rounded-lg m-auto max-w-8xl" src={Lost_3d} alt="404" />
+        <img className="rounded-lg m-auto w-11/12" src={Lost_3d} alt="404" />
       </div>
     </div>
   );
