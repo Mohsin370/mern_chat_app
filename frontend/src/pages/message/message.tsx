@@ -35,19 +35,27 @@ type User = {
 
 export const MessageModule = () => {
   const [users, setUser] = useState<User[]>([]);
+  const [selectedUser, setSelectedUser] = useState<User>({
+    name: "",
+    email: "",
+    _id: "",
+  });
 
   useEffect(() => {
     GetUsers().then((res) => {
       if (res.data.success) {
-        console.log(res.data.users);
         setUser(res.data.users);
       }
     });
   }, []);
 
+  const selectUser = (user: User) => {
+    setSelectedUser(user);
+  };
+
   return (
     <div className="m-auto w-5/6 flex  h-5/6  px-2  my-10">
-      <div className="w-1/3">
+      <div className=" w-full md:w-1/3">
         <div className="flex items-center justify-between py-auto my-5">
           <h5 className=" font-extrabold text-2xl">Messages</h5>
           <span className="cursor-pointer">...</span>
@@ -61,7 +69,11 @@ export const MessageModule = () => {
         </div>
         <div className="flex my-3 w-100 cursor-pointer">
           {users.map((user, key) => {
-            return <ProfileImg image={user.image ? user.image : ""} key={key} />;
+            return (
+              <div onClick={() => selectUser(user)} key={key}>
+                <ProfileImg image={user.image ? user.image : ""} />
+              </div>
+            );
           })}
         </div>
         <hr className="my-4" />
@@ -72,8 +84,8 @@ export const MessageModule = () => {
           })}
         </div>
       </div>
-      <div className=" w-full pl-3 py-5">
-        <Conversations/>
+      <div className="hidden md:block w-full pl-3 py-5">
+        <Conversations {...selectedUser} />
       </div>
     </div>
   );
