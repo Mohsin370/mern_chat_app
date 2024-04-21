@@ -1,10 +1,13 @@
+import { useEffect, useState } from "react";
 import ChatTab from "../../components/chatTab";
+import ProfileImg from "../../components/profileImg";
+import { GetUsers } from "../../api/user";
+import Conversations from "../conversations/conversations";
 
 const chatTabs = [
   {
     name: "Khawaja Mohsin",
-    image:
-      "https://lh3.googleusercontent.com/a/ACg8ocLa4rBu43NAksWtSOEH5fEislC5EaBvTQEwFvApENrqV3ZlkqY-=s288-c-no",
+    image: "https://lh3.googleusercontent.com/a/ACg8ocLa4rBu43NAksWtSOEH5fEislC5EaBvTQEwFvApENrqV3ZlkqY-=s288-c-no",
     time: "4:42 PM",
     lastMsg: "I love Ping app",
   },
@@ -15,37 +18,62 @@ const chatTabs = [
     time: "4:42 PM",
     lastMsg: "",
   },
+  {
+    name: "USER",
+    image: "",
+    time: "4:42 PM",
+    lastMsg: "",
+  },
 ];
 
+type User = {
+  name: string;
+  email: string;
+  _id: string;
+  image?: string;
+};
+
 export const MessageModule = () => {
+  const [users, setUser] = useState<User[]>([]);
+
+  useEffect(() => {
+    GetUsers().then((res) => {
+      if (res.data.success) {
+        console.log(res.data.users);
+        setUser(res.data.users);
+      }
+    });
+  }, []);
+
   return (
-    <div className="m-auto w-5/6">
-      <div className="flex items-center justify-between py-auto my-5">
-        <h5 className=" font-extrabold text-2xl">Messages</h5>
-        <span className="cursor-pointer">...</span>
+    <div className="m-auto w-5/6 flex  h-5/6  px-2  my-10">
+      <div className="w-1/3">
+        <div className="flex items-center justify-between py-auto my-5">
+          <h5 className=" font-extrabold text-2xl">Messages</h5>
+          <span className="cursor-pointer">...</span>
+        </div>
+        <div>
+          <input className="bg-slate-100 w-full rounded px-2 py-2 focus:outline-none focus:shadow-secondary-light" placeholder="Search..." />
+        </div>
+        <div className="flex justify-between items-center mt-4">
+          <h4 className="font-bold text-xl">Online now</h4>
+          <h4 className="text-secondary">All</h4>
+        </div>
+        <div className="flex my-3 w-100 cursor-pointer">
+          {users.map((user, key) => {
+            return <ProfileImg image={user.image ? user.image : ""} key={key} />;
+          })}
+        </div>
+        <hr className="my-4" />
+
+        <div className="mt-6">
+          {chatTabs.map((tab, key) => {
+            return <ChatTab key={key} name={tab.name} time={tab.time} image={tab.image} lastMsg={tab.lastMsg} />;
+          })}
+        </div>
       </div>
-      <div>
-        <input
-          className="bg-slate-100 w-full rounded px-2 py-2 focus:outline-none focus:shadow-secondary-light"
-          placeholder="Search..."
-        />
-      </div>
-      <div className="flex justify-between items-center mt-4">
-        <h4 className="font-bold text-xl">Online now</h4>
-        <h4 className="text-secondary">All</h4>
-      </div>
-      <div className="mt-6">
-        {chatTabs.map((tab, key) => {
-          return (
-            <ChatTab
-              key={key}
-              name={tab.name}
-              time={tab.time}
-              image={tab.image}
-              lastMsg={tab.lastMsg}
-            />
-          );
-        })}
+      <div className=" w-full pl-3 py-5">
+        <Conversations/>
       </div>
     </div>
   );

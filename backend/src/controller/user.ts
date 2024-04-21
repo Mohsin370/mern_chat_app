@@ -60,7 +60,7 @@ const login = async (req: Request, res: Response) => {
 
 const signup = async (req: Request, res: Response) => {
   try {
-    const { email, password, name } = req.body;
+    const { email, password, name, image } = req.body;
     let user = await User.findOne({ email });
     if (user) {
       //check for duplicates
@@ -74,6 +74,9 @@ const signup = async (req: Request, res: Response) => {
       email,
       name,
       password,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      image
     });
 
     let error = user.validateSync();
@@ -119,4 +122,21 @@ const signup = async (req: Request, res: Response) => {
   }
 };
 
-export { login, signup };
+const getUsers = async(req: Request, res: Response) => {
+  try {
+    const users = await User.find().select({
+      "password":0      //exclude password from selections
+    });
+    res.status(200).send({
+      success: true,
+      users
+    })
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Error while fetching users"
+    })
+  }
+}
+
+export { login, signup, getUsers };

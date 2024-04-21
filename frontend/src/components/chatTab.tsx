@@ -1,5 +1,7 @@
 // import React from 'react';
 
+import ProfileImg from "./profileImg";
+
 interface tabProps {
   name: string;
   time: string;
@@ -10,7 +12,7 @@ interface tabProps {
 const ChatTab = (props: tabProps) => {
   return (
     <div className="flex rounded-md pb-5">
-      <img className=" rounded-full w-10 h-10 mr-2" src={props.image} />
+      <ProfileImg image={props.image} />
 
       <div className="flex justify-between w-full">
         <div className="flex flex-col">

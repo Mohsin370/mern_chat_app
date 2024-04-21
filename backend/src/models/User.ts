@@ -1,16 +1,5 @@
 import { Schema, model } from "mongoose";
-
-interface IUserSchema extends Document {
-  name: string;
-  email: string;
-  password: string;
-  picture: string;
-  createdAt: Date;
-  updatedAt: Date;
-  _id: string;
-  __v: number;
-  id: string;
-}
+import { IUserSchema } from "../interface/interface";
 
 const UserSchema = new Schema<IUserSchema>({
   name: {
@@ -33,9 +22,8 @@ const UserSchema = new Schema<IUserSchema>({
     required: true,
     minlength: 8,
   },
-  picture: { type: String },
+  image: { type: String },
 });
-
 
 const user = model<IUserSchema>("User", UserSchema);
 export default user;

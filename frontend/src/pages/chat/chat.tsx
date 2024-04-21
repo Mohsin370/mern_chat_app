@@ -19,7 +19,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="">
+    <div className=" h-dvh">
       <div className="flex w-5/6 m-auto justify-between items-center pt-5">
         <Link to="/" className="text-5xl font-gilroy-bold cursor-pointer text-secondary  ">
           Ping
