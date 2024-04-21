@@ -32,7 +32,12 @@ const login = async (req: Request, res: Response) => {
         return res.status(200).send({
           success: true,
           message: "Login Successfully",
-          token,
+          user:{
+            name: user.name,
+            email: user.email,
+            token,
+            id: user.id
+          },
         });
       }
     );
@@ -95,8 +100,7 @@ const signup = async (req: Request, res: Response) => {
         if (err) throw err;
         res.status(200).send({
           success: true,
-          message: "Signup Successfully",
-          token,
+          message: "Signup Successfully"
         });
       }
     );
