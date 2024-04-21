@@ -3,8 +3,6 @@ import { MessageModule } from "../message/message";
 import { AuthContext } from "../../context/auth/authContext";
 import { useContext } from "react";
 
-
-
 const Chat = () => {
   const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -17,16 +15,20 @@ const Chat = () => {
       id: "",
       token: "",
     });
-    navigate('/');
+    navigate("/");
   };
 
   return (
     <div className="">
-      <div className="flex">
-        <Link to="/" className="text-5xl font-gilroy-bold cursor-pointer text-secondary  px-10  pt-10">
+      <div className="flex w-5/6 m-auto justify-between items-center pt-5">
+        <Link to="/" className="text-5xl font-gilroy-bold cursor-pointer text-secondary  ">
           Ping
         </Link>
-        <button className="text-xl bg-secondary text-white px-5 py-3 rounded" onClick={logout}>Logout</button>
+        <div>
+          <button className="text-xl bg-secondary text-white px-5 py-3 rounded" onClick={logout}>
+            Logout
+          </button>
+        </div>
       </div>
 
       <MessageModule></MessageModule>
