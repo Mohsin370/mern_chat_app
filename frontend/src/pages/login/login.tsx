@@ -21,7 +21,7 @@ const loginSchema = () => {
 export default function Login() {
   const navigate = useNavigate();
   const { setNotification } = useContext(NotificationContext);
-  const { user, setUser } = useContext(AuthContext);
+  const { setUser } = useContext(AuthContext);
 
   const userLogin = (values: IUserLogin) => {
     LoginApi(values)
