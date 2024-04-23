@@ -3,7 +3,6 @@ import ChatTab from "../../components/chatTab";
 import ProfileImg from "../../components/profileImg";
 import { GetUsers } from "../../api/user";
 import Conversations from "../conversations/conversations";
-import { Fragment } from "react";
 
 const chatTabs = [
   {
