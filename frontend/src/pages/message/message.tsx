@@ -67,9 +67,9 @@ export const MessageModule = () => {
           <h4 className="font-bold text-xl">Online now</h4>
           <h4 className="text-secondary">All</h4>
         </div>
-        <div className=" pt-2 overflow-x-auto whitespace-nowrap">
+        <div className="pt-2 overflow-x-auto whitespace-nowrap">
           {users.map((user, key) => (
-            <div className="inline-block" onClick={() => selectUser(user)} key={key}>
+            <div className="inline-block cursor-pointer mb-2" onClick={() => selectUser(user)} key={key}>
               <ProfileImg image={user.image ? user.image : ""} />
             </div>
           ))}
@@ -77,9 +77,13 @@ export const MessageModule = () => {
 
         <hr className="my-4" />
 
-        <div className="mt-6">
+        <div className="mt-6 cursor-pointer">
           {chatTabs.map((tab, key) => {
-            return <ChatTab key={key} name={tab.name} time={tab.time} image={tab.image} lastMsg={tab.lastMsg} />;
+            return (
+              <div className="bg-gray-100 px-2 pt-2 rounded-md">
+                <ChatTab key={key} name={tab.name} time={tab.time} image={tab.image} lastMsg={tab.lastMsg} />
+              </div>
+            );
           })}
         </div>
       </div>
