@@ -55,7 +55,7 @@ export const MessageModule = () => {
 
   return (
     <div className="m-auto w-5/6 flex h-5/6 px-2 my-10 divide-x-2">
-      <div className="w-full md:w-1/3 pr-4">
+      <div className="w-full md:w-1/3 mr-2 overflow-auto">
         <div className="flex items-center justify-between py-auto my-5">
           <h5 className=" font-extrabold text-2xl">Messages</h5>
           <span className="cursor-pointer">...</span>
