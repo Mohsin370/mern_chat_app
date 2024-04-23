@@ -3,6 +3,7 @@ import ChatTab from "../../components/chatTab";
 import ProfileImg from "../../components/profileImg";
 import { GetUsers } from "../../api/user";
 import Conversations from "../conversations/conversations";
+import { Fragment } from "react";
 
 const chatTabs = [
   {
@@ -67,15 +68,14 @@ export const MessageModule = () => {
           <h4 className="font-bold text-xl">Online now</h4>
           <h4 className="text-secondary">All</h4>
         </div>
-        <div className="flex my-3 w-100 cursor-pointer">
-          {users.map((user, key) => {
-            return (
-              <div onClick={() => selectUser(user)} key={key}>
-                <ProfileImg image={user.image ? user.image : ""} />
-              </div>
-            );
-          })}
+        <div className=" pt-2 overflow-x-auto whitespace-nowrap">
+          {users.map((user, key) => (
+            <div className="inline-block" onClick={() => selectUser(user)} key={key}>
+              <ProfileImg image={user.image ? user.image : ""} />
+            </div>
+          ))}
         </div>
+
         <hr className="my-4" />
 
         <div className="mt-6">
