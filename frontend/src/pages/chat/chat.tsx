@@ -25,7 +25,7 @@ const Chat = () => {
           Ping
         </Link>
         <div>
-          <button className="text-xl bg-secondary text-white px-5 py-3 rounded" onClick={logout}>
+          <button className="text-lg bg-secondary text-white px-5 py-2 rounded" onClick={logout}>
             Logout
           </button>
         </div>
