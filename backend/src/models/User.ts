@@ -23,7 +23,7 @@ const UserSchema = new Schema<IUserSchema>({
     minlength: 8,
   },
   image: { type: String },
-});
+}, { timestamps: true });
 
 const user = model<IUserSchema>("User", UserSchema);
 export default user;

@@ -1,6 +1,10 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ProfileImg from "../../components/profileImg";
 import { PaperAirplaneIcon } from "@heroicons/react/16/solid";
+import { SendMessage } from "../../api/chat";
+import { AuthContext } from "../../context/auth/authContext";
+import { AxiosError } from "axios";
+import { GetConversations } from "../../api/conversations";
 
 type UserProp = {
   name: string;
@@ -11,22 +15,38 @@ type UserProp = {
 
 export default function Conversations(props: UserProp) {
   const [chatMessage, setChatMessage] = useState<string>("");
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log("getConversation", props._id);
+    if (!props._id) return;
+
+    GetConversations(user.id, props._id)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error: AxiosError) => {
+        console.log(error.message);
+      });
   }, [props._id]);
 
   const sendMessage = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const receiver: string = props._id;
-    const message: string = chatMessage;
-    console.log(receiver, message);
+    if (chatMessage.length === 0) return;
+    setChatMessage("");
+
+    SendMessage({ sender: user.id, receiver: props._id, message: chatMessage })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error: AxiosError) => {
+        console.log(error.message);
+      });
   };
 
   return (
     <div className="h-full px-2">
       <div className="w-100 flex px-5">
-        <ProfileImg image="" />
+        <ProfileImg image="" name={props.name} />
         <h3 className=" text-3xl font-bold">{props.name}</h3>
       </div>
       <hr className="my-4" />
@@ -39,6 +59,7 @@ export default function Conversations(props: UserProp) {
           <textarea
             className="focus:outline-none focus:shadow-secondary px-3 py-2 w-full border border-violet-100 resize-none overflow-hidden"
             placeholder="Write a message..."
+            value={chatMessage}
             onChange={(e) => setChatMessage(e.target.value)}
           />
           <button type="submit" className="bg-violet-500 text-white px-7 py-2 rounded-sm">

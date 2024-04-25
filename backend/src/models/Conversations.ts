@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 import { IConversationSchema } from "../interface/interface";
 
 const ConversationSchema = new Schema<IConversationSchema>({
@@ -18,4 +18,7 @@ const ConversationSchema = new Schema<IConversationSchema>({
 }, { timestamps: true });
 
 
-export default ConversationSchema;
+const Conversation = model<IConversationSchema>("Conversation", ConversationSchema);
+
+
+export default Conversation;

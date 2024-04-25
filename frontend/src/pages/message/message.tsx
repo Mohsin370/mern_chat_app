@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ChatTab from "../../components/chatTab";
 import ProfileImg from "../../components/profileImg";
 import { GetUsers } from "../../api/user";
 import Conversations from "../conversations/conversations";
+import { AxiosResponse } from "axios";
+import { GetUserConversations } from "../../api/conversations";
+import { AuthContext } from "../../context/auth/authContext";
 
 const chatTabs = [
   {
@@ -33,7 +36,16 @@ type User = {
   image?: string;
 };
 
+interface ConversationList<User> {
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  user: User;
+}
+
 export const MessageModule = () => {
+  const { user } = useContext(AuthContext);
   const [users, setUser] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User>({
     name: "",
@@ -41,10 +53,20 @@ export const MessageModule = () => {
     _id: "",
   });
 
+  const [chatTabs, setChatTabs] = useState<ConversationList<User>[]>();
+
   useEffect(() => {
-    GetUsers().then((res) => {
+    GetUsers(user.id).then((res: AxiosResponse) => {
       if (res.data.success) {
         setUser(res.data.users);
+      }
+    });
+
+    GetUserConversations(user.id).then((res: AxiosResponse) => {
+      if (res.data.success) {
+        console.log(res.data.conversation);
+
+        setChatTabs(res.data.conversation);
       }
     });
   }, []);
@@ -70,7 +92,7 @@ export const MessageModule = () => {
         <div className="py-4 overflow-x-auto overflow-y-hidden whitespace-nowrap scrollbar">
           {users.map((user, key) => (
             <div className="inline-block cursor-pointer mb-2" onClick={() => selectUser(user)} key={key}>
-              <ProfileImg image={user.image ? user.image : ""} />
+              <ProfileImg image={user.image ?? ""} name={user.name} />
             </div>
           ))}
         </div>
@@ -78,10 +100,10 @@ export const MessageModule = () => {
         <hr className="my-4" />
 
         <div className="mt-6 cursor-pointer overflow-x-auto h-full scrollbar">
-          {chatTabs.map((tab, key) => {
+          {chatTabs?.map((tab, key) => {
             return (
-              <div className="bg-gray-100 px-2 pt-2 rounded-md" key={key}>
-                <ChatTab name={tab.name} time={tab.time} image={tab.image} lastMsg={tab.lastMsg} />
+              <div className={`px-2 pt-2 rounded-md ${selectedUser.name === tab.user.name ? "bg-gray-100 " : ""} `} key={key} onClick={() => selectUser(tab.user)}>
+                <ChatTab name={tab.user.name} time={""} image={tab.user.image!} lastMsg={""} />
               </div>
             );
           })}

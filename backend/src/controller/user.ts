@@ -124,7 +124,9 @@ const signup = async (req: Request, res: Response) => {
 
 const getUsers = async(req: Request, res: Response) => {
   try {
-    const users = await User.find().select({
+    const users = await User.find({
+      _id: { $ne: req.params.id }
+    }).select({
       "password":0      //exclude password from selections
     });
     res.status(200).send({

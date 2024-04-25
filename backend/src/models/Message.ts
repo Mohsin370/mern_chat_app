@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 import { IMessageSchema } from "../interface/interface";
 
 const MessageSchema = new Schema<IMessageSchema>({
@@ -7,6 +7,9 @@ const MessageSchema = new Schema<IMessageSchema>({
   receiver: { type: Schema.Types.ObjectId, ref: "User", required: true },
   date: { type: Date, default: Date.now },
   isRead: { type: Boolean, default: false },
-});
+  conversationId: { type: Schema.Types.ObjectId, ref: "Conversation", required: true },
+}, { timestamps: true });
 
-export default MessageSchema;
+const Message = model<IMessageSchema>("Message", MessageSchema);
+
+export default Message;

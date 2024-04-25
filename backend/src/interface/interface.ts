@@ -20,6 +20,7 @@ interface IMessageSchema extends Document{
     date: Date,
     createdAt: Date;
     isRead: boolean;
+    conversationId:  Schema.Types.ObjectId;
 }
 
 interface IConversationSchema extends Document{
