@@ -7,27 +7,7 @@ import { AxiosResponse } from "axios";
 import { GetUserConversations } from "../../api/conversations";
 import { AuthContext } from "../../context/auth/authContext";
 
-const chatTabs = [
-  {
-    name: "Khawaja Mohsin",
-    image: "https://lh3.googleusercontent.com/a/ACg8ocLa4rBu43NAksWtSOEH5fEislC5EaBvTQEwFvApENrqV3ZlkqY-=s288-c-no",
-    time: "4:42 PM",
-    lastMsg: "I love Ping app",
-  },
-  {
-    name: "Mohsin Ijaz",
-    image:
-      "https://media-syd2-1.cdn.whatsapp.net/v/t61.24694-24/404848781_653767043587857_6955072495903007698_n.jpg?ccb=11-4&oh=01_ASBqASLiJXOELHHWvbokZUNpysfQV4xIFyGftS3kxPbReQ&oe=662B35A6&_nc_sid=e6ed6c&_nc_cat=107",
-    time: "4:42 PM",
-    lastMsg: "",
-  },
-  {
-    name: "USER",
-    image: "",
-    time: "4:42 PM",
-    lastMsg: "",
-  },
-];
+
 
 type User = {
   name: string;
