@@ -1,12 +1,24 @@
 import { Request, Response } from "express";
 import Conversation from "../models/Conversations";
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 
 const getConversationMessages = async (req: Request, res: Response) => {
   try {
-    const conversations = await Conversation.find({
-      participants: { $in: [req.params.userId, req.params.participantId] },
-    });
+    const conversations = await Conversation.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(req.params.conversationId),
+        },
+      },
+      {
+        $lookup: {
+          from: "messages",
+          localField: "messages",
+          foreignField: "_id",
+          as: "messages",
+        },
+      },
+    ]);
 
     res.status(200).send({
       success: true,
@@ -23,51 +35,41 @@ const getConversationMessages = async (req: Request, res: Response) => {
 };
 
 const getUserConversations = async (req: Request, res: Response) => {
-  //   participants: { $in: [req.params.userId] },
   try {
     const userId = new mongoose.Types.ObjectId(req.params.userId); // Convert string ID to ObjectId
     const conversation = await Conversation.aggregate([
-        {
-            $match: { participants: userId }
+      {
+        $match: { participants: userId },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "participants",
+          foreignField: "_id",
+          as: "users",
         },
-        {
-            $lookup: {
-                from: "users",
-                localField: "participants",
-                foreignField: "_id",
-                as: "users"
-            }
+      },
+      {
+        $project: {
+          _id: 1,
+          messages: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          user: {
+            $arrayElemAt: [
+              {
+                $filter: {
+                  input: "$users",
+                  as: "user",
+                  cond: { $ne: ["$$user._id", userId] },
+                },
+              },
+              0,
+            ],
+          },
         },
-        {
-            $project: {
-                _id: 1,
-                messages: 1,
-                createdAt: 1,
-                updatedAt: 1,
-                "user": { $arrayElemAt: [
-                    {
-                        $filter: {
-                            input: "$users",
-                            as: "user",
-                            cond: { $ne: ["$$user._id", userId] }
-                        }
-                    }
-                ,0] },
-            }
-        }
+      },
     ]);
-    // {
-    //     $project: {
-    //       participants: {
-    //         $filter: {
-    //           input: "$userData",
-    //           as: "userData",
-    //           cond: { $ne: ["$$userData._id", userId] },
-    //         },
-    //       },
-    //     },
-    //   },
-    console.log(conversation);
     res.send({
       success: true,
       message: "Conversations retrieved successfully",
