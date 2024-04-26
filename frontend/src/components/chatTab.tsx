@@ -12,7 +12,7 @@ interface tabProps {
 const ChatTab = (props: tabProps) => {
   return (
     <div className="flex rounded-md pb-5">
-      <ProfileImg image={props.image} />
+      <ProfileImg image={props.image} name={props.name} />
 
       <div className="flex justify-between w-full">
         <div className="flex flex-col">
