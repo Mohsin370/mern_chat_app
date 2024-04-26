@@ -6,6 +6,7 @@ interface messageDataType {
   sender: string;
   receiver: string;
   message: string;
+  conversationId: string
 }
 
 const SendMessage = (data: messageDataType) => {
