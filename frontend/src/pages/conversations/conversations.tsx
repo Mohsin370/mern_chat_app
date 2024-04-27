@@ -5,6 +5,7 @@ import { SendMessage } from "../../api/chat";
 import { AuthContext } from "../../context/auth/authContext";
 import { AxiosError } from "axios";
 import { GetConversations } from "../../api/conversations";
+import { Socket } from "socket.io-client";
 
 type User = {
   name: string;
@@ -27,18 +28,32 @@ interface Message {
   receiver: string;
 }
 
-export default function Conversations(props: Conversation<User>) {
+interface ConversationPropsType {
+  socket: Socket;
+  conversation: Conversation<User>;
+}
+
+export default function Conversations(props: ConversationPropsType) {
   const [chatMessage, setChatMessage] = useState<string>("");
   const { user } = useContext(AuthContext);
   const [conversation, setConversation] = useState<Message[]>([]);
 
   useEffect(() => {
-    // if (!props._id) return;
     getConversations();
-  }, [props._id]);
+    props.socket.on("receive_message", (data) => {
+      if (props.conversation._id !== data.conversationId) return;
+      setConversation((prev) => {
+        if (prev) {
+          return [...prev, data];
+        } else {
+          return [data];
+        }
+      });
+    });
+  }, [props.conversation._id]);
 
   const getConversations = (conversationId?: string) => {
-    GetConversations(conversationId ?? props._id)
+    GetConversations(conversationId ?? props.conversation._id)
       .then((res) => {
         console.log(res.data);
         if (res.data.conversation[0]) {
@@ -57,9 +72,16 @@ export default function Conversations(props: Conversation<User>) {
     event.preventDefault();
     if (chatMessage.length === 0) return;
 
-    SendMessage({ sender: user.id, receiver: props.user._id, message: chatMessage, conversationId: props._id })
+    props.socket.emit("send_message", {
+      sender: user.id,
+      receiver: props.conversation.user._id,
+      message: chatMessage,
+      conversationId: props.conversation._id,
+    });
+
+    SendMessage({ sender: user.id, receiver: props.conversation.user._id, message: chatMessage, conversationId: props.conversation._id })
       .then((res) => {
-        if (!props._id) {
+        if (!props.conversation._id) {
           console.log(res.data);
         }
         getConversations(res.data.conversationId);
@@ -70,11 +92,20 @@ export default function Conversations(props: Conversation<User>) {
     setChatMessage("");
   };
 
+  const onChangeHandler = (message: string) => {
+    setChatMessage(message);
+    if (message.length === 0) {
+      props.socket.emit("typing_status", props.conversation._id, conversation[conversation.length - 1].message);
+      return;
+    }
+    props.socket.emit("typing_status", props.conversation._id, "Typing");
+  };
+
   return (
     <div className="h-full px-2">
       <div className="w-100 flex px-5">
-        <ProfileImg image={props.user.image} name={props.user.name} />
-        <h3 className=" text-3xl font-bold">{props.user.name}</h3>
+        <ProfileImg image={props.conversation.user.image} name={props.conversation.user.name} />
+        <h3 className=" text-3xl font-bold">{props.conversation.user.name}</h3>
       </div>
       <hr className="my-4" />
 
@@ -84,12 +115,16 @@ export default function Conversations(props: Conversation<User>) {
             <div key={key}>
               {el.sender === user.id ? (
                 <div className="justify-end flex my-3">
-                  <ProfileImg image="" name={user.name} />
                   <p className=" bg-secondary text-white rounded p-3 w-fit">{el.message}</p>
+                  <div className="ml-2">
+                    <ProfileImg image="" name={user.name} />
+                  </div>
                 </div>
               ) : (
                 <div className="justify-start flex my-3">
-                  <ProfileImg image="" name={props.user.name} />
+                  <div className="mr-2">
+                    <ProfileImg image="" name={props.conversation.user.name} />
+                  </div>
                   <p className=" bg-gray-300 rounded p-3 w-fit">{el.message}</p>
                 </div>
               )}
@@ -101,7 +136,7 @@ export default function Conversations(props: Conversation<User>) {
             className="focus:outline-none focus:shadow-secondary px-3 py-2 w-full border border-violet-100 resize-none overflow-hidden"
             placeholder="Write a message..."
             value={chatMessage}
-            onChange={(e) => setChatMessage(e.target.value)}
+            onChange={(e) => onChangeHandler(e.target.value)}
           />
           <button type="submit" className=" bg-secondary text-white px-7 py-2 rounded-sm">
             <PaperAirplaneIcon className="h-6" />

@@ -22,6 +22,7 @@ export default function Signup() {
   const {setNotification}  = useContext(NotificationContext);
 
   const userSignUp = (values: IUser) => {
+    values.image = ""; //empty for now
     SignupAPi(values).then((res) => {
       if (res.data.success) {
         setNotification({

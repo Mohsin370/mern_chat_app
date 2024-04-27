@@ -29,4 +29,4 @@ interface IConversationSchema extends Document {
   updatedAt: Date;
 }
 
-export { IUserSchema, IMessageSchema, IConversationSchema };
+export  { IUserSchema, IMessageSchema, IConversationSchema };

@@ -1,11 +1,26 @@
 import { Link, useNavigate } from "react-router-dom";
 import { MessageModule } from "../message/message";
 import { AuthContext } from "../../context/auth/authContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
+import { io } from "socket.io-client";
 
 const Chat = () => {
-  const { setUser } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  const socket = io(import.meta.env.VITE_REACT_BACKEND);
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to socket:", socket.id);
+    });
+    socket.emit("online",user.id); //User is now online
+    socket.on("disconnect", (reason: string) => {
+      console.log("Disconnected from socket:", reason);
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const logout = () => {
     localStorage.removeItem("user");
@@ -31,7 +46,7 @@ const Chat = () => {
         </div>
       </div>
 
-      <MessageModule></MessageModule>
+      <MessageModule socket ={socket}></MessageModule>
     </div>
   );
 };

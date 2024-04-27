@@ -7,6 +7,7 @@ interface tabProps {
   time: string;
   image: string;
   lastMsg: string;
+  typing: string;
 }
 
 const ChatTab = (props: tabProps) => {
@@ -20,7 +21,7 @@ const ChatTab = (props: tabProps) => {
           {props.lastMsg ? (
             <span className="text-xs text-gray-400">{props.lastMsg}</span>
           ) : (
-            <span className="text-xs text-secondary">Typing...</span>
+            <span className="text-xs text-secondary">{props.typing}</span>
           )}
         </div>
         <span className="text-xs text-gray-400">{props.time}</span>
