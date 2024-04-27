@@ -114,18 +114,24 @@ export default function Conversations(props: ConversationPropsType) {
           {conversation?.map((el, key) => (
             <div key={key}>
               {el.sender === user.id ? (
-                <div className="justify-end flex my-3">
-                  <p className=" bg-secondary text-white rounded p-3 w-fit">{el.message}</p>
+                <div className="justify-end flex my-3 items-center">
+                  <div>
+                    <p className="pr-1 text-right">{user.name}</p>
+                    <p className=" bg-secondary text-white rounded p-2 w-fit">{el.message}</p>
+                  </div>
                   <div className="ml-2">
                     <ProfileImg image="" name={user.name} />
                   </div>
                 </div>
               ) : (
-                <div className="justify-start flex my-3">
+                <div className="justify-start flex my-3 items-center">
                   <div className="mr-2">
                     <ProfileImg image="" name={props.conversation.user.name} />
                   </div>
-                  <p className=" bg-gray-300 rounded p-3 w-fit">{el.message}</p>
+                  <div>
+                    <p className="pl-1">{props.conversation.user.name}</p>
+                    <p className=" bg-gray-300 rounded p-2 w-fit">{el.message}</p>
+                  </div>
                 </div>
               )}
             </div>
