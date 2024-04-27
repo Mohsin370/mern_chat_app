@@ -25,8 +25,8 @@ export default {
       const newUtilities = {
         ".scrollbar": {
           "&::-webkit-scrollbar": {
-            width: "2px",
-            height: "2px",
+            width: "5px",
+            height: "5px",
           },
           "&::-webkit-scrollbar-track": {
             background: "white",
