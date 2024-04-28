@@ -5,7 +5,7 @@ import { SendMessage } from "../../api/chat";
 import { AuthContext } from "../../context/auth/authContext";
 import { AxiosError } from "axios";
 import { GetConversations } from "../../api/conversations";
-import { Socket } from "socket.io-client";
+import { ChatContext } from "../../context/chat/chatContext";
 
 type User = {
   name: string;
@@ -29,18 +29,18 @@ interface Message {
 }
 
 interface ConversationPropsType {
-  socket: Socket;
   conversation: Conversation<User>;
 }
 
 export default function Conversations(props: ConversationPropsType) {
   const [chatMessage, setChatMessage] = useState<string>("");
   const { user } = useContext(AuthContext);
+  const {socket} = useContext(ChatContext);
   const [conversation, setConversation] = useState<Message[]>([]);
 
   useEffect(() => {
     getConversations();
-    props.socket.on("receive_message", (data) => {
+    socket.on("receive_message", (data) => {
       if (props.conversation._id !== data.conversationId) return;
       setConversation((prev) => {
         if (prev) {
@@ -72,7 +72,7 @@ export default function Conversations(props: ConversationPropsType) {
     event.preventDefault();
     if (chatMessage.length === 0) return;
 
-    props.socket.emit("send_message", {
+    socket.emit("send_message", {
       sender: user.id,
       receiver: props.conversation.user._id,
       message: chatMessage,
@@ -95,10 +95,10 @@ export default function Conversations(props: ConversationPropsType) {
   const onChangeHandler = (message: string) => {
     setChatMessage(message);
     if (message.length === 0) {
-      props.socket.emit("typing_status", props.conversation._id, conversation[conversation.length - 1].message);
+      socket.emit("typing_status", props.conversation._id, conversation[conversation.length - 1].message);
       return;
     }
-    props.socket.emit("typing_status", props.conversation._id, "Typing");
+    socket.emit("typing_status", props.conversation._id, "Typing");
   };
 
   return (

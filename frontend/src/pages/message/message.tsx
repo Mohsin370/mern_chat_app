@@ -6,7 +6,7 @@ import Conversations from "../conversations/conversations";
 import { AxiosResponse } from "axios";
 import { GetUserConversations } from "../../api/conversations";
 import { AuthContext } from "../../context/auth/authContext";
-import { Socket } from "socket.io-client";
+import { ChatContext } from "../../context/chat/chatContext";
 
 type User = {
   name: string;
@@ -24,23 +24,22 @@ interface Conversation<User> {
   user: User;
 }
 
-interface MessageModuleProps {
-  socket: Socket;
-}
 
 
-export const MessageModule = (props: MessageModuleProps) => {
+
+export const MessageModule = () => {
   const { user } = useContext(AuthContext);
+  const { socket } = useContext(ChatContext);
   const [users, setUser] = useState<User[]>([]);
   // const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation<User>>();
 
   const [chatTabs, setChatTabs] = useState<Conversation<User>[]>([]);
 
-  props.socket.on("receive_message", (data) => {
+  socket.on("receive_message", (data) => {
     if (selectedConversation?._id !== data.conversationId) return;
   });
-  props.socket.on("typing_status", (conversationId: string, status: string) => {
+  socket.on("typing_status", (conversationId: string, status: string) => {
     chatTabs?.map((tab) => {
       if (tab._id === conversationId) {
         tab.user.typing = status;
@@ -60,7 +59,7 @@ export const MessageModule = (props: MessageModuleProps) => {
 
     // const getOnlineUsers = () =>{
 
-    //   props.socket.on("online", (onl_user_id: string) => {
+    //   socket.on("online", (onl_user_id: string) => {
     //     const online_user = users.find((u) => u._id === onl_user_id);
     //     if (online_user) {
     //       console.log(online_user);
@@ -131,7 +130,7 @@ export const MessageModule = (props: MessageModuleProps) => {
       </div>
       {selectedConversation && (
         <div className="hidden md:block w-full pb-5">
-          <Conversations socket={props.socket} conversation={selectedConversation} />
+          <Conversations conversation={selectedConversation} />
         </div>
       )}
     </div>
