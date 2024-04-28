@@ -115,7 +115,7 @@ export default function Conversations(props: ConversationPropsType) {
             <div key={key}>
               {el.sender === user.id ? (
                 <div className="justify-end flex my-3 items-center">
-                  <div>
+                  <div className="flex flex-col items-end">
                     <p className="pr-1 text-right">{user.name}</p>
                     <p className=" bg-secondary text-white rounded p-2 w-fit">{el.message}</p>
                   </div>
