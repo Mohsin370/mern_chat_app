@@ -38,8 +38,7 @@ io.on("connection", (socket: any) => {
     console.log("user disconnected");
   });
   socket.on("send_message", (data: any) => {
-    io.emit("receive_message", data);
-    // socket.broadcast.emit("receive_message", data);
+    socket.broadcast.emit("receive_message", data);
   });
   socket.on("typing_status", (connversationId: string, status: string) => {
     socket.broadcast.emit("typing_status", connversationId, status);

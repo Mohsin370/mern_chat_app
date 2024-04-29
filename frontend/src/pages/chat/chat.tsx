@@ -2,12 +2,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { MessageModule } from "../message/message";
 import { AuthContext } from "../../context/auth/authContext";
 import { useContext, useEffect } from "react";
-import { ChatContext } from "../../context/chat/chatContext";
+import { Socket, io } from "socket.io-client";
 
 const Chat = () => {
   const { setUser } = useContext(AuthContext);
-  const {socket} = useContext(ChatContext);
   const navigate = useNavigate();
+  const socket: Socket = io(import.meta.env.VITE_REACT_BACKEND);
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -16,15 +16,15 @@ const Chat = () => {
     socket.on("disconnect", (reason: string) => {
       console.log("Disconnected from socket:", reason);
     });
+    socket.on("error", (error: Error) => {
+      console.error("Socket connection error:", error.message);
+    });
 
-    // return () => {
-    //   console.log("Cleaning up socket connection");
-      
-    //   socket.disconnect();
-    // };
-
-
-  });
+    return () => {
+      console.log("Cleaning up socket connection");
+      socket.disconnect();
+    };
+  }, [socket]);
 
   const logout = () => {
     localStorage.removeItem("user");
@@ -50,7 +50,7 @@ const Chat = () => {
         </div>
       </div>
 
-      <MessageModule></MessageModule>
+      <MessageModule socket={socket}></MessageModule>
     </div>
   );
 };

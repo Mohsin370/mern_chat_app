@@ -2,14 +2,16 @@ import { Request, Response } from "express";
 import Message from "../models/Message";
 import Conversation from "../models/Conversations";
 import { IMessageSchema } from "../interface/interface";
+import mongoose from "mongoose";
 
 const createMessage = async (req: Request, res: Response) => {
   try {
     let conversationId = req.body.conversationId;
+    let receiver =  new mongoose.Types.ObjectId(req.body.receiver)
     if (!conversationId) {
       //try to find conversation between two users
       const res = await Conversation.findOne({
-        participants: { $all: [req.body.sender, req.body.receiver] },
+        participants: { $all: [req.body.sender, receiver] },
       })
         .select("_id")
         .exec();

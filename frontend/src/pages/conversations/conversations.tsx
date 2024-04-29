@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import ProfileImg from "../../components/profileImg";
 import { PaperAirplaneIcon } from "@heroicons/react/16/solid";
 import { SendMessage } from "../../api/chat";
@@ -6,6 +6,7 @@ import { AuthContext } from "../../context/auth/authContext";
 import { AxiosError } from "axios";
 import { GetConversations } from "../../api/conversations";
 import { ChatContext } from "../../context/chat/chatContext";
+import { Socket } from "socket.io-client";
 
 type User = {
   name: string;
@@ -30,37 +31,58 @@ interface Message {
 
 interface ConversationPropsType {
   conversation: Conversation<User>;
+  socket: Socket;
 }
 
 export default function Conversations(props: ConversationPropsType) {
   const [chatMessage, setChatMessage] = useState<string>("");
   const { user } = useContext(AuthContext);
-  const {socket} = useContext(ChatContext);
+  const { activeConversation, setActiveConversation } = useContext(ChatContext);
   const [conversation, setConversation] = useState<Message[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      const { scrollHeight } = messagesEndRef.current;
+      messagesEndRef.current.scrollTop = scrollHeight;
+    }
+  };
 
   useEffect(() => {
-    getConversations();
-    socket.on("receive_message", (data) => {
-      if (props.conversation._id !== data.conversationId) return;
-      setConversation((prev) => {
-        if (prev) {
-          return [...prev, data];
-        } else {
-          return [data];
-        }
-      });
-    });
-  }, [props.conversation._id]);
+    console.log("effect", props.socket.id);
+    getConversations(activeConversation.conversationId);
 
-  const getConversations = (conversationId?: string) => {
-    GetConversations(conversationId ?? props.conversation._id)
+    props.socket.on("receive_message", (messageData) => {
+      console.log("receiver message received as :", messageData.conversationId, activeConversation.conversationId);
+      if (activeConversation.conversationId !== messageData.conversationId) return;
+      setConversation((prev) => (prev ? [...prev, messageData] : [messageData]));
+    });
+
+
+    scrollToBottom();
+    
+    return() => {
+      setConversation([{
+        message: "",
+        sender: "",
+        receiver: "",
+      }])
+    }
+  }, [activeConversation, props.socket]);
+
+
+
+  const getConversations = (conversationId: string) => {
+    console.log(conversationId);
+    GetConversations(conversationId)
       .then((res) => {
         console.log(res.data);
+        scrollToBottom();
+
         if (res.data.conversation[0]) {
           setConversation(res.data.conversation[0].messages);
         } else {
           setConversation(res.data.conversation[0]);
-          console.log(res.data.message);
         }
       })
       .catch((error: AxiosError) => {
@@ -72,33 +94,40 @@ export default function Conversations(props: ConversationPropsType) {
     event.preventDefault();
     if (chatMessage.length === 0) return;
 
-    socket.emit("send_message", {
+    const messageData = {
       sender: user.id,
-      receiver: props.conversation.user._id,
+      receiver: activeConversation.receiver,
       message: chatMessage,
-      conversationId: props.conversation._id,
-    });
+      conversationId: activeConversation.conversationId,
+    };
 
-    SendMessage({ sender: user.id, receiver: props.conversation.user._id, message: chatMessage, conversationId: props.conversation._id })
+    setConversation((prev) => (prev ? [...prev, messageData] : [messageData]));
+
+    SendMessage(messageData)
       .then((res) => {
-        if (!props.conversation._id) {
-          console.log(res.data);
+        if (!activeConversation.conversationId) {
+          setActiveConversation({
+            conversationId: res.data.conversationId,
+            receiver: activeConversation.receiver,
+          });
         }
-        getConversations(res.data.conversationId);
+        props.socket.emit("send_message", messageData);
       })
       .catch((error: AxiosError) => {
         console.log(error);
       });
+    scrollToBottom();
+
     setChatMessage("");
   };
 
   const onChangeHandler = (message: string) => {
     setChatMessage(message);
     if (message.length === 0) {
-      socket.emit("typing_status", props.conversation._id, conversation[conversation.length - 1].message);
+      props.socket.emit("typing_status", activeConversation.conversationId, conversation[conversation.length - 1].message);
       return;
     }
-    socket.emit("typing_status", props.conversation._id, "Typing");
+    props.socket.emit("typing_status", activeConversation.conversationId, "Typing");
   };
 
   return (
@@ -110,7 +139,7 @@ export default function Conversations(props: ConversationPropsType) {
       <hr className="my-4" />
 
       <div className="bg-gray-100 h-[94%] px-5 py-5 relative rounded-sm">
-        <div className="h-[90%] overflow-y-auto">
+        <div className="h-[90%] overflow-y-auto" ref={messagesEndRef}>
           {conversation?.map((el, key) => (
             <div key={key}>
               {el.sender === user.id ? (

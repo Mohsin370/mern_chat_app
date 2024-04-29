@@ -1,24 +1,29 @@
 import { createContext, useState, Dispatch, SetStateAction, ReactNode } from "react";
-import { Socket, io } from "socket.io-client";
-const chatSocket = io(import.meta.env.VITE_REACT_BACKEND);
 
-
-
-type socketContextType = {
-  socket: Socket;
-  setSocket: Dispatch<SetStateAction<any>>;
+type chatContextType = {
+  activeConversation: ConversationType;
+  setActiveConversation: Dispatch<SetStateAction<ConversationType>>;
 };
 
-const defaultContext = {
-  socket: chatSocket,
-  setSocket: () => {},
+type ConversationType = {
+  conversationId: string;
+  receiver: string;
 };
 
-export const ChatContext = createContext<socketContextType>(defaultContext);
+const initialConversation: ConversationType = {
+  conversationId: "",
+  receiver: "",
+};
 
+const defaultContext: chatContextType = {
+  activeConversation: initialConversation,
+  setActiveConversation: () => {},
+} as chatContextType;
+
+export const ChatContext = createContext<chatContextType>(defaultContext);
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
-  const [socket, setSocket] = useState<Socket>(chatSocket);
+  const [activeConversation, setActiveConversation] = useState<ConversationType>(initialConversation);
 
-  return <ChatContext.Provider value={{ socket, setSocket }}>{children}</ChatContext.Provider>;
+  return <ChatContext.Provider value={{ activeConversation, setActiveConversation }}>{children}</ChatContext.Provider>;
 };

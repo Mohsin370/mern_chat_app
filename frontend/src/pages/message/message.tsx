@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import ChatTab from "../../components/chatTab";
 import ProfileImg from "../../components/profileImg";
-import {  GetAllUsers } from "../../api/user";
+import { GetAllUsers } from "../../api/user";
 import Conversations from "../conversations/conversations";
 import { AxiosResponse } from "axios";
 import { GetUserConversations } from "../../api/conversations";
 import { AuthContext } from "../../context/auth/authContext";
 import { ChatContext } from "../../context/chat/chatContext";
+import { Socket } from "socket.io-client";
 
 type User = {
   name: string;
@@ -24,20 +25,30 @@ interface Conversation<User> {
   user: User;
 }
 
+type propsType = {
+  socket: Socket;
+};
 
+type socketMessage = {
+  message: string;
+  sender: string;
+  receiver: string;
+  conversationId: string;
+};
 
-
-export const MessageModule = () => {
+export const MessageModule = ({ socket }: propsType) => {
   const { user } = useContext(AuthContext);
-  const { socket } = useContext(ChatContext);
+  const { activeConversation, setActiveConversation } = useContext(ChatContext);
   const [users, setUser] = useState<User[]>([]);
   // const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation<User>>();
 
   const [chatTabs, setChatTabs] = useState<Conversation<User>[]>([]);
 
-  socket.on("receive_message", (data) => {
-    if (selectedConversation?._id !== data.conversationId) return;
+  socket.on("send_message", (data: socketMessage) => {
+    console.log("receiver message received as :", data.receiver, user.id);
+    if (data.receiver !== user.id) return;
+    getUserConversations();
   });
   socket.on("typing_status", (conversationId: string, status: string) => {
     chatTabs?.map((tab) => {
@@ -53,31 +64,26 @@ export const MessageModule = () => {
       if (res.data.success) {
         setUser(res.data.users);
       }
-
-
     });
+    getUserConversations();
+  }, [activeConversation, selectedConversation]);
 
-    // const getOnlineUsers = () =>{
-
-    //   socket.on("online", (onl_user_id: string) => {
-    //     const online_user = users.find((u) => u._id === onl_user_id);
-    //     if (online_user) {
-    //       console.log(online_user);
-  
-    //       setOnlineUsers((prevUsers) => [...prevUsers, online_user]);
-    //     }
-    //   });
-    // }
-
+  const getUserConversations = () => {
     GetUserConversations(user.id).then((res: AxiosResponse) => {
       if (res.data.success) {
         setChatTabs(res.data.conversation);
       }
     });
-  }, []);
+  };
 
-  const selectConversation = (convsersation: Conversation<User>) => {
-    setSelectedConversation(convsersation);
+  const selectConversation = (conversation: Conversation<User>) => {
+    if(conversation._id === selectedConversation?._id) return;
+    setSelectedConversation(conversation);
+    const newActiveConversation = {
+      conversationId: conversation._id,
+      receiver: conversation.user._id,
+    };
+    setActiveConversation(newActiveConversation);
   };
 
   const findUserConversation = (user: User) => {
@@ -91,7 +97,14 @@ export const MessageModule = () => {
         user: user,
       };
     }
+    
+    if(conversation._id === selectedConversation?._id) return; 
     setSelectedConversation(conversation);
+    const newActiveConversation = {
+      receiver: user._id,
+      conversationId: conversation._id,
+    };
+    setActiveConversation(newActiveConversation);
   };
 
   return (
@@ -121,7 +134,7 @@ export const MessageModule = () => {
         <div className="mt-6 overflow-x-auto h-full scrollbar">
           {chatTabs?.map((tab, key) => {
             return (
-              <div className={`px-2  cursor-pointer pt-2 rounded-md ${selectedConversation?._id === tab._id ? "bg-gray-100 " : ""} `} key={key} onClick={() => selectConversation(tab)}>
+              <div className={`px-2  cursor-pointer pt-2 rounded-md ${activeConversation.conversationId === tab._id ? "bg-gray-100 " : ""} `} key={key} onClick={() => selectConversation(tab)}>
                 <ChatTab name={tab.user.name} time={""} image={tab.user.image} lastMsg={""} typing={tab.user.typing} />
               </div>
             );
@@ -130,7 +143,7 @@ export const MessageModule = () => {
       </div>
       {selectedConversation && (
         <div className="hidden md:block w-full pb-5">
-          <Conversations conversation={selectedConversation} />
+          <Conversations socket={socket} conversation={selectedConversation} />
         </div>
       )}
     </div>
