@@ -149,7 +149,7 @@ export default function Conversations(props: ConversationPropsType) {
                 <div className="justify-end flex my-3 items-center">
                   <div className="flex flex-col items-end">
                     <p className="pr-1 text-right">{user.name}</p>
-                    <p className=" bg-secondary text-white rounded p-2 w-fit">{el.message}</p>
+                    <p className=" bg-secondary text-white rounded p-2 w-fit whitespace-pre-wrap">{el.message}</p>
                   </div>
                   <div className="ml-2">
                     <ProfileImg image="" name={user.name} />
@@ -162,7 +162,7 @@ export default function Conversations(props: ConversationPropsType) {
                   </div>
                   <div>
                     <p className="pl-1">{props.conversation.user.name}</p>
-                    <p className=" bg-gray-300 rounded p-2 w-fit">{el.message}</p>
+                    <p className=" bg-gray-300 rounded p-2 w-fit whitespace-pre-wrap">{el.message}</p>
                   </div>
                 </div>
               )}
