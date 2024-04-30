@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 const createMessage = async (req: Request, res: Response) => {
   try {
     let conversationId = req.body.conversationId;
-    let receiver =  new mongoose.Types.ObjectId(req.body.receiver)
+    let receiver = new mongoose.Types.ObjectId(req.body.receiver);
     if (!conversationId) {
       //try to find conversation between two users
       const res = await Conversation.findOne({
@@ -35,7 +35,7 @@ const createMessage = async (req: Request, res: Response) => {
       $push: { messages: message._id },
     });
 
-    res.status(201).json({ message, conversationId });
+    res.status(201).json({ success: true, message, conversationId });
     return;
   } catch (err) {
     res.status(500).send({

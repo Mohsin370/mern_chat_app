@@ -58,19 +58,19 @@ export default function Conversations(props: ConversationPropsType) {
       setConversation((prev) => (prev ? [...prev, messageData] : [messageData]));
     });
 
-
     scrollToBottom();
-    
-    return() => {
-      setConversation([{
-        message: "",
-        sender: "",
-        receiver: "",
-      }])
-    }
+
+    return () => {
+      setConversation([
+        {
+          message: "",
+          sender: "",
+          receiver: "",
+        },
+      ]);
+      props.socket.off("receive_message");
+    };
   }, [activeConversation, props.socket]);
-
-
 
   const getConversations = (conversationId: string) => {
     console.log(conversationId);
@@ -105,13 +105,16 @@ export default function Conversations(props: ConversationPropsType) {
 
     SendMessage(messageData)
       .then((res) => {
-        if (!activeConversation.conversationId) {
-          setActiveConversation({
-            conversationId: res.data.conversationId,
-            receiver: activeConversation.receiver,
-          });
+        if (res.data.success) {
+          if (!activeConversation.conversationId) {
+            setActiveConversation({
+              conversationId: res.data.conversationId,
+              receiver: activeConversation.receiver,
+            });
+          }
+          console.log("message sent");
+          props.socket.emit("send_message", messageData);
         }
-        props.socket.emit("send_message", messageData);
       })
       .catch((error: AxiosError) => {
         console.log(error);
