@@ -7,7 +7,8 @@ import { Formik, Form, Field } from "formik";
 import { AxiosError } from "axios";
 import { ApiResponse } from "../../types/api";
 import { NotificationContext } from "../../context/notification/notificationContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import { EyeSlashIcon, EyeIcon } from "@heroicons/react/16/solid";
 
 const SignupSchema = () => {
   return Yup.object().shape({
@@ -19,35 +20,37 @@ const SignupSchema = () => {
 
 export default function Signup() {
   const navigate = useNavigate();
-  const {setNotification}  = useContext(NotificationContext);
+  const { setNotification } = useContext(NotificationContext);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const userSignUp = (values: IUser) => {
     values.image = ""; //empty for now
-    SignupAPi(values).then((res) => {
-      if (res.data.success) {
+    SignupAPi(values)
+      .then((res) => {
+        if (res.data.success) {
+          setNotification({
+            type: "success",
+            message: res.data.message,
+            show: true,
+          });
+          navigate("/login");
+        }
+      })
+      .catch((error: AxiosError<ApiResponse>) => {
+        if (error.response) {
+          setNotification({
+            type: "error",
+            message: error.response.data.message,
+            show: true,
+          });
+          return;
+        }
         setNotification({
-          type:"success",
-          message: res.data.message,
-          show: true
+          type: "error",
+          message: "Sign up failed",
+          show: true,
         });
-        navigate("/login");
-      }
-    }).catch((error: AxiosError<ApiResponse>)=>{
-      if(error.response){
-        setNotification({
-          type:"error",
-          message: error.response.data.message,
-          show: true
-        });
-        return
-      }
-      setNotification({
-        type:"error",
-        message: "Sign up failed",
-        show: true
       });
-
-    });
   };
   return (
     <article className="pros prose-xl">
@@ -66,9 +69,23 @@ export default function Signup() {
                   {touched.name && errors.name && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.name}</div>}
                   <Field className="w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" name="email" type="text" placeholder="Email" />
                   {touched.email && errors.email && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.email}</div>}
-                  <Field className=" w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" name="password" type="password" placeholder="Password" />
+                  <div className="w-100 relative w-full">
+                    <Field
+                      className=" w-5/6 sm:w-full shadow p-2 my-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                    />
+                    {showPassword ? (
+                      <EyeSlashIcon className="absolute right-2 top-5 bg-white w-9 hover:cursor-pointer" onClick={() => setShowPassword(false)} />
+                    ) : (
+                      <EyeIcon className="absolute right-2 top-5 bg-white w-9 hover:cursor-pointer" onClick={() => setShowPassword(true)} />
+                    )}
+                  </div>
                   {touched.password && errors.password && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.password}</div>}
-                  <button className="bg-secondary text-white py-2 px-8 rounded-sm m-3" type="submit">Register</button>
+                  <button className="bg-secondary text-white py-2 px-8 rounded-sm m-3" type="submit">
+                    Register
+                  </button>
                 </Form>
               )}
             </Formik>
