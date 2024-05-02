@@ -1,11 +1,12 @@
 import { Formik, Form, Field } from "formik";
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import * as Yup from "yup";
 import { LoginApi } from "../../api/auth";
 import { IUserLogin } from "../../interface/user";
 import { useNavigate } from "react-router-dom";
 
 import { NotificationContext } from "../../context/notification/notificationContext";
+import { AuthContext } from "../../context/auth/authContext";
 import { useContext } from "react";
 import { AxiosError } from "axios";
 import { ApiResponse } from "../../types/api";
@@ -20,22 +21,29 @@ const loginSchema = () => {
 export default function Login() {
   const navigate = useNavigate();
   const { setNotification } = useContext(NotificationContext);
+  const { setUser } = useContext(AuthContext);
 
   const userLogin = (values: IUserLogin) => {
     LoginApi(values)
       .then((res) => {
         if (res.data.success) {
-          localStorage.setItem("token", res.data.token);
           setNotification({
             type: "success",
             message: res.data.message,
             show: true,
           });
 
-          // localStorage.setItem("user", JSON.stringify(res.data.user));
+          setUser({
+            id: res.data.user.id,
+            name: res.data.user.name,
+            email: res.data.user.email,
+            token: res.data.user.token,
+          });
+          
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+
           navigate("/chat");
         } else {
-          console.log("hello");
           setNotification({
             type: "error",
             message: res.data.message,
@@ -96,6 +104,7 @@ export default function Login() {
           </div>
         </div>
       </div>
+      <Outlet/>
     </article>
   );
 }

@@ -32,7 +32,12 @@ const login = async (req: Request, res: Response) => {
         return res.status(200).send({
           success: true,
           message: "Login Successfully",
-          token,
+          user:{
+            name: user.name,
+            email: user.email,
+            token,
+            id: user.id
+          },
         });
       }
     );
@@ -55,7 +60,7 @@ const login = async (req: Request, res: Response) => {
 
 const signup = async (req: Request, res: Response) => {
   try {
-    const { email, password, name } = req.body;
+    const { email, password, name, image } = req.body;
     let user = await User.findOne({ email });
     if (user) {
       //check for duplicates
@@ -69,6 +74,9 @@ const signup = async (req: Request, res: Response) => {
       email,
       name,
       password,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      image
     });
 
     let error = user.validateSync();
@@ -95,8 +103,7 @@ const signup = async (req: Request, res: Response) => {
         if (err) throw err;
         res.status(200).send({
           success: true,
-          message: "Signup Successfully",
-          token,
+          message: "Signup Successfully"
         });
       }
     );
@@ -115,4 +122,23 @@ const signup = async (req: Request, res: Response) => {
   }
 };
 
-export { login, signup };
+const getUsers = async(req: Request, res: Response) => {
+  try {
+    const users = await User.find({
+      _id: { $ne: req.params.id }
+    }).select({
+      "password":0      //exclude password from selections
+    });
+    res.status(200).send({
+      success: true,
+      users
+    })
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Error while fetching users"
+    })
+  }
+}
+
+export { login, signup, getUsers };
