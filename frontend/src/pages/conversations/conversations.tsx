@@ -146,7 +146,7 @@ export default function Conversations(props: ConversationPropsType) {
       <hr className="my-4" />
 
       <div className="bg-gray-100 h-[94%] px-5 py-5 relative rounded-sm">
-        <div className="h-[90%] overflow-y-auto" ref={messagesEndRef}>
+        <div className="h-[90%] overflow-y-auto scrollbar pr-3" ref={messagesEndRef}>
           {conversation?.map((el, key) => (
             <div key={key}>
               {el.sender === user.id ? (
