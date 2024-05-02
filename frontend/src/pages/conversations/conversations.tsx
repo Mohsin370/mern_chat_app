@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import ProfileImg from "../../components/profileImg";
-import { PaperAirplaneIcon } from "@heroicons/react/16/solid";
+import { PaperAirplaneIcon, FaceSmileIcon } from "@heroicons/react/16/solid";
 import { SendMessage } from "../../api/chat";
 import { AuthContext } from "../../context/auth/authContext";
 import { AxiosError } from "axios";
@@ -133,6 +133,10 @@ export default function Conversations(props: ConversationPropsType) {
     props.socket.emit("typing_status", activeConversation.conversationId, "Typing");
   };
 
+  const showEmojis = () => {
+
+  }
+
   return (
     <div className="h-full px-2">
       <div className="w-100 flex px-5">
@@ -171,11 +175,14 @@ export default function Conversations(props: ConversationPropsType) {
         </div>
         <form className="absolute left-0 bottom-0 justify-center flex w-full" onSubmit={(e) => sendMessage(e)}>
           <textarea
-            className="focus:outline-none focus:shadow-secondary px-3 py-2 w-full border border-violet-100 resize-none overflow-hidden"
+            className="focus:outline-none focus:shadow-secondary px-3 py-2 w-full border border-r-0 border-violet-100 resize-none overflow-hidden"
             placeholder="Write a message..."
             value={chatMessage}
             onChange={(e) => onChangeHandler(e.target.value)}
           />
+            <FaceSmileIcon className="w-10 focus:shadow-secondary text-secondary border-y pr-1 hover:cursor-pointer bg-white"
+            onClick={showEmojis}/>
+            {/* <EmojiPicker className="absolute top-0 left-0"></EmojiPicker> */}
           <button type="submit" className=" bg-secondary text-white px-7 py-2 rounded-sm">
             <PaperAirplaneIcon className="h-6" />
           </button>
