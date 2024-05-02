@@ -77,9 +77,9 @@ export default function Signup() {
                       placeholder="Password"
                     />
                     {showPassword ? (
-                      <EyeSlashIcon className="absolute right-2 top-5 bg-white w-9 hover:cursor-pointer" onClick={() => setShowPassword(false)} />
+                      <EyeSlashIcon className="absolute right-0 top-0 h-full w-9 text-secondary hover:cursor-pointer" onClick={() => setShowPassword(false)} />
                     ) : (
-                      <EyeIcon className="absolute right-2 top-5 bg-white w-9 hover:cursor-pointer" onClick={() => setShowPassword(true)} />
+                      <EyeIcon className="absolute right-0 top-0 h-full text-secondary w-9 hover:cursor-pointer" onClick={() => setShowPassword(true)} />
                     )}
                   </div>
                   {touched.password && errors.password && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.password}</div>}
