@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { NotificationContext } from "../../context/notification/notificationContext";
 import { AuthContext } from "../../context/auth/authContext";
 import { useContext } from "react";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { ApiResponse } from "../../types/api";
 
 const loginSchema = () => {
@@ -39,9 +39,8 @@ export default function Login() {
             email: res.data.user.email,
             token: res.data.user.token,
           });
-
+          
           localStorage.setItem("user", JSON.stringify(res.data.user));
-          axios.defaults.headers["token"] = res.data.user.token;
 
           navigate("/chat");
         } else {
@@ -105,7 +104,7 @@ export default function Login() {
           </div>
         </div>
       </div>
-      <Outlet />
+      <Outlet/>
     </article>
   );
 }

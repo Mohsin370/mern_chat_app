@@ -35,7 +35,6 @@ const Chat = () => {
       id: "",
       token: "",
     });
-    axios.defaults.headers["token"] = null;
     navigate("/");
   };
 

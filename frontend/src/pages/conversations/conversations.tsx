@@ -133,9 +133,7 @@ export default function Conversations(props: ConversationPropsType) {
     props.socket.emit("typing_status", activeConversation.conversationId, "Typing");
   };
 
-  const showEmojis = () => {
-
-  }
+  const showEmojis = () => {};
 
   return (
     <div className="h-full px-2">
@@ -180,9 +178,10 @@ export default function Conversations(props: ConversationPropsType) {
             value={chatMessage}
             onChange={(e) => onChangeHandler(e.target.value)}
           />
-            <FaceSmileIcon className="w-10 focus:shadow-secondary text-secondary border-y pr-1 hover:cursor-pointer bg-white"
-            onClick={showEmojis}/>
-            {/* <EmojiPicker className="absolute top-0 left-0"></EmojiPicker> */}
+          <div className="bg-white focus:shadow-secondary text-secondary border-y pr-1 flex">
+            <FaceSmileIcon className="w-8 items-center hover:cursor-pointer " onClick={showEmojis} />
+          </div>
+          {/* <EmojiPicker className="absolute top-0 left-0"></EmojiPicker> */}
           <button type="submit" className=" bg-secondary text-white px-7 py-2 rounded-sm">
             <PaperAirplaneIcon className="h-6" />
           </button>
