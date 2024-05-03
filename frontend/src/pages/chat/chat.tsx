@@ -3,7 +3,6 @@ import { MessageModule } from "../message/message";
 import { AuthContext } from "../../context/auth/authContext";
 import { useContext, useEffect } from "react";
 import { Socket, io } from "socket.io-client";
-import axios from "axios";
 
 const Chat = () => {
   const { setUser } = useContext(AuthContext);
