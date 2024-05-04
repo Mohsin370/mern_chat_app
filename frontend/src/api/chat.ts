@@ -1,7 +1,7 @@
 import Axios from "axios";
 
 const BASE_API_URL = import.meta.env.VITE_REACT_API_URL + "/message";
-const token = JSON.parse(localStorage.getItem("user")!).token;
+const token: string = JSON.parse(localStorage.getItem("user") ?? "{}").token;
 
 interface messageDataType {
   sender: string;

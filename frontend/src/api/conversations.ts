@@ -1,7 +1,7 @@
 import Axios from "axios";
 
-const token = JSON.parse(localStorage.getItem("user")!).token;
 const BASE_API_URL = import.meta.env.VITE_REACT_API_URL + "/conversations";
+const token: string = JSON.parse(localStorage.getItem("user") ?? "{}").token;
 
 const GetConversations = (conversationId: string) => {
   return Axios.get(BASE_API_URL + `/${conversationId}`, {

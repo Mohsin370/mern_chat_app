@@ -73,10 +73,8 @@ export default function Conversations(props: ConversationPropsType) {
   }, [activeConversation, props.socket]);
 
   const getConversations = (conversationId: string) => {
-    console.log(conversationId);
     GetConversations(conversationId)
       .then((res) => {
-        console.log(res.data);
         scrollToBottom();
 
         if (res.data.conversation[0]) {

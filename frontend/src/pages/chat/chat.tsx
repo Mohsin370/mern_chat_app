@@ -3,10 +3,9 @@ import { MessageModule } from "../message/message";
 import { AuthContext } from "../../context/auth/authContext";
 import { useContext, useEffect } from "react";
 import { Socket, io } from "socket.io-client";
-import axios from "axios";
 
 const Chat = () => {
-  const { user, setUser } = useContext(AuthContext);
+  const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const socket: Socket = io(import.meta.env.VITE_REACT_BACKEND);
 
