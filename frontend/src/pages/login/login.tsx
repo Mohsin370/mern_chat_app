@@ -82,9 +82,9 @@ export default function Login() {
             <Formik initialValues={{ email: "", password: "" }} onSubmit={(values) => userLogin(values)} validationSchema={loginSchema}>
               {({ errors, touched }) => (
                 <Form className="flex flex-wrap flex-col justify-center items-center mb-3">
-                  <Field className="w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" type="text" name="email" placeholder="Email" />
+                  <Field className="w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" type="text" name="email" placeholder="Email" autoComplete="email" />
                   {touched.email && errors.email && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.email}</div>}
-                  <Field className=" w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" type="password" name="password" placeholder="Password" />
+                  <Field className=" w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" type="password" autoComplete="current-password" name="password" placeholder="Password" />
                   {touched.password && errors.password && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.password}</div>}
                   <Link to="/forgot-password" className="text-secondary text-lg py-2">
                     Forgot Password?
