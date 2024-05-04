@@ -1,22 +1,13 @@
-import axios from "axios";
+import Axios from "axios";
 
 const BASE_API_URL = import.meta.env.VITE_REACT_API_URL + "/conversations";
-const token: string = JSON.parse(localStorage.getItem("user") ?? "{}").token;
-
-const axiosInstance = axios.create({
-  baseURL: BASE_API_URL,
-  headers: {
-    token,
-  },
-});
 
 const GetConversations = (conversationId: string) => {
-  console.log(axiosInstance);
-  return axiosInstance.get(`/${conversationId}`);
+  return Axios.get(BASE_API_URL + `/${conversationId}`);
 };
 
 const GetUserConversations = (user: string) => {
-  return axiosInstance.get(`/user/${user}`);
+  return Axios.get(BASE_API_URL + `/user/${user}`);
 };
 
 export { GetConversations, GetUserConversations };
