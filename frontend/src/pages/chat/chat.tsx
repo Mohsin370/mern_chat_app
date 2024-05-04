@@ -12,8 +12,6 @@ const Chat = () => {
 
   useEffect(() => {
 
-    axios.defaults.headers['token'] = user.token;
-
     socket.on("connect", () => {
       console.log("Connected to socket:", socket.id);
     });
