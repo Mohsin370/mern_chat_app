@@ -58,7 +58,6 @@ export default function Conversations(props: ConversationPropsType) {
       setConversation((prev) => (prev ? [...prev, messageData] : [messageData]));
     });
 
-    scrollToBottom();
 
     return () => {
       setConversation([
@@ -72,11 +71,15 @@ export default function Conversations(props: ConversationPropsType) {
     };
   }, [activeConversation, props.socket]);
 
+  useEffect(()=>{
+    scrollToBottom();
+
+
+  },[conversation])
+
   const getConversations = (conversationId: string) => {
     GetConversations(conversationId)
       .then((res) => {
-        scrollToBottom();
-
         if (res.data.conversation[0]) {
           setConversation(res.data.conversation[0].messages);
         } else {
@@ -117,7 +120,6 @@ export default function Conversations(props: ConversationPropsType) {
       .catch((error: AxiosError) => {
         console.log(error);
       });
-    scrollToBottom();
 
     setChatMessage("");
   };
