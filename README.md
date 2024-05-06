@@ -15,16 +15,16 @@
 
 <h1>Screenshots</h1>
 <p>HomePage</p>
-![image](https://github.com/Mohsin370/mern_chat_app/assets/62910365/152059c2-42c6-4da5-8322-b941971fcb93)
+<img src ="https://github.com/Mohsin370/mern_chat_app/assets/62910365/152059c2-42c6-4da5-8322-b941971fcb93">
 
 <p>Signup</p>
-![image](https://github.com/Mohsin370/mern_chat_app/assets/62910365/f7eabb9c-4c25-4b47-a4b1-f78944381be6)
+<img src ="https://github.com/Mohsin370/mern_chat_app/assets/62910365/f7eabb9c-4c25-4b47-a4b1-f78944381be6">
 
 <p>Login</p>
-![image](https://github.com/Mohsin370/mern_chat_app/assets/62910365/2634de21-c462-4525-a6b3-a9a7d57958d3)
+<img src ="https://github.com/Mohsin370/mern_chat_app/assets/62910365/2634de21-c462-4525-a6b3-a9a7d57958d3">
 
 <p>Chat screen</p>
-![image](https://github.com/Mohsin370/mern_chat_app/assets/62910365/67a922c4-abab-445b-8574-5e0f29d5c949)
+<img src ="https://github.com/Mohsin370/mern_chat_app/assets/62910365/ca18c24f-6fed-42b9-a7db-3a8a5de6c1c8">
 
 
 <h1>Installation</h1>
