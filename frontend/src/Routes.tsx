@@ -53,7 +53,7 @@ const Routes = () => {
   }, [storedUser, user.token]);
 
   if (storedUser.token || user.token) {
-    axios.defaults.headers.token = user.token;
+    axios.defaults.headers.token = user.token || storedUser.token;
   }
 
   return <RouterProvider router={user.token ? createBrowserRouter(privateRoutes) : createBrowserRouter(publicRoutes)} />;
