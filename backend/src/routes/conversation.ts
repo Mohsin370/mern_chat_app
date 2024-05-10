@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getConversationMessages, getUserConversations } from "../controller/conversation";
-import { authorizeMiddleware } from "../middleware/middleware";
+import { authorizeMiddleware } from "../middleware/authMiddleware";
 const router = Router();
 
 router.get("/user/:userId", authorizeMiddleware, getUserConversations);
