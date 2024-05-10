@@ -6,6 +6,8 @@ import path from "path";
 import cors from "cors";
 const { Server } = require("socket.io");
 import { createServer } from "node:http";
+import socketIO from "./socket/socket";
+import socketMiddlware from "./middleware/socketMiddlware";
 
 const PORT: string | number = process.env.PORT || 5000;
 const app: Express = express();
@@ -16,6 +18,7 @@ const io = new Server(server, {
     origin: "*",
   },
 });
+io.use(socketMiddlware, socketIO(io));
 
 const envFilePath = path.resolve(__dirname, "..", "..", ".env");
 dotenv.config({ path: envFilePath });
@@ -30,22 +33,6 @@ app.use("/api", routes);
 
 process.on("unhandledRejection", (reason, p) => {
   console.error("Unhandled Rejection at:", p, "reason:", reason);
-});
-
-io.on("connection", (socket: any) => {
-  console.log("user connected", io.engine.clientsCount);
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-  socket.on("send_message", (data: any) => {
-    socket.broadcast.emit("receive_message", data);
-  });
-  socket.on("typing_status", (connversationId: string, status: string) => {
-    socket.broadcast.emit("typing_status", connversationId, status);
-  });
-  socket.on("online", (userId: string) => {
-    socket.broadcast.emit("online", userId);
-  });
 });
 
 db().then(() => {
