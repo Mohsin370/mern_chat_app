@@ -11,6 +11,7 @@ const socketIO = (io: any) => {
 
     socket.on("disconnect", (reason: any) => {
       console.log("user disconnected", reason);
+      registerUser(io, socket);
     });
     socket.on("send_message", (data: any) => {
       socket.to(data.receiverSocketId).emit("receive_message", data);
