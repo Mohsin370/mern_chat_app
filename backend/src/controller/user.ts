@@ -26,7 +26,7 @@ const login = async (req: Request, res: Response) => {
     jwt.sign(
       payload,
       process.env.JWT_SECRET as string,
-      { expiresIn: 3600 },
+      { expiresIn: "10h" },
       (err, token) => {
         if (err) throw err;
         return res.status(200).send({
