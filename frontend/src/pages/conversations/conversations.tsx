@@ -54,6 +54,7 @@ export default function Conversations(props: ConversationPropsType) {
 
   useEffect(() => {
     getConversations(activeConversation.conversationId);
+    setChatMessage("");
     console.log(socket.id);
 
     socket.on("receive_message", (messageData) => {
