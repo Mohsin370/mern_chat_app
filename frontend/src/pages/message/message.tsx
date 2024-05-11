@@ -7,7 +7,7 @@ import { AxiosResponse } from "axios";
 import { GetUserConversations } from "../../api/conversations";
 import { AuthContext } from "../../context/auth/authContext";
 import { ChatContext } from "../../context/chat/chatContext";
-import { Socket } from "socket.io-client";
+import socket from "../../config/socketConfig";
 
 type User = {
   name: string;
@@ -25,9 +25,6 @@ interface Conversation<User> {
   user: User;
 }
 
-type propsType = {
-  socket: Socket;
-};
 
 type socketMessage = {
   message: string;
@@ -36,7 +33,7 @@ type socketMessage = {
   conversationId: string;
 };
 
-export const MessageModule = ({ socket }: propsType) => {
+export const MessageModule = () => {
   const { user } = useContext(AuthContext);
   const { activeConversation, setActiveConversation } = useContext(ChatContext);
   const [users, setUser] = useState<User[]>([]);
@@ -143,7 +140,7 @@ export const MessageModule = ({ socket }: propsType) => {
       </div>
       {selectedConversation && (
         <div className="hidden md:block w-full pb-5">
-          <Conversations socket={socket} conversation={selectedConversation} />
+          <Conversations conversation={selectedConversation} />
         </div>
       )}
     </div>

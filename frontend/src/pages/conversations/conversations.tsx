@@ -6,7 +6,7 @@ import { AuthContext } from "../../context/auth/authContext";
 import { AxiosError } from "axios";
 import { GetConversations } from "../../api/conversations";
 import { ChatContext } from "../../context/chat/chatContext";
-import { Socket } from "socket.io-client";
+import socket from "../../config/socketConfig";
 
 type User = {
   name: string;
@@ -31,14 +31,14 @@ interface Message {
 
 interface ConversationPropsType {
   conversation: Conversation<User>;
-  socket: Socket;
 }
 
 export default function Conversations(props: ConversationPropsType) {
   const [chatMessage, setChatMessage] = useState<string>("");
   const { user } = useContext(AuthContext);
-  const { activeConversation, setActiveConversation } = useContext(ChatContext);
+  const { activeConversation, setActiveConversation, onlineUsers } = useContext(ChatContext);
   const [conversation, setConversation] = useState<Message[]>([]);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -47,17 +47,23 @@ export default function Conversations(props: ConversationPropsType) {
       messagesEndRef.current.scrollTop = scrollHeight;
     }
   };
+  // socket.on("users", (users) => {
+  //   console.log("Users array received", users);
+  //   setOnlineUsers([...users]); //update states with online users
+  // });
 
   useEffect(() => {
-    console.log("effect", props.socket.id);
     getConversations(activeConversation.conversationId);
+    console.log(socket.id);
 
-    props.socket.on("receive_message", (messageData) => {
-      console.log("receiver message received as :", messageData.conversationId, activeConversation.conversationId);
+    socket.on("receive_message", (messageData) => {
+      console.log(messageData);
       if (activeConversation.conversationId !== messageData.conversationId) return;
       setConversation((prev) => (prev ? [...prev, messageData] : [messageData]));
     });
-
+    // socket.onAny((event, ...args) => {
+    //   console.log(event, args);
+    // });
 
     return () => {
       setConversation([
@@ -67,15 +73,13 @@ export default function Conversations(props: ConversationPropsType) {
           receiver: "",
         },
       ]);
-      props.socket.off("receive_message");
+      socket.off("receive_message");
     };
-  }, [activeConversation, props.socket]);
+  }, [activeConversation, socket, onlineUsers]);
 
-  useEffect(()=>{
+  useEffect(() => {
     scrollToBottom();
-
-
-  },[conversation])
+  }, [conversation]);
 
   const getConversations = (conversationId: string) => {
     GetConversations(conversationId)
@@ -95,11 +99,13 @@ export default function Conversations(props: ConversationPropsType) {
     event.preventDefault();
     if (chatMessage.length === 0) return;
 
+    console.log("oneline users", onlineUsers);
     const messageData = {
       sender: user.id,
       receiver: activeConversation.receiver,
       message: chatMessage,
       conversationId: activeConversation.conversationId,
+      receiverSocketId: onlineUsers.find((user) => user.userId === activeConversation.receiver)?.socketId,
     };
 
     setConversation((prev) => (prev ? [...prev, messageData] : [messageData]));
@@ -114,7 +120,7 @@ export default function Conversations(props: ConversationPropsType) {
             });
           }
           console.log("message sent");
-          props.socket.emit("send_message", messageData);
+          socket.emit("send_message", messageData);
         }
       })
       .catch((error: AxiosError) => {
@@ -127,10 +133,10 @@ export default function Conversations(props: ConversationPropsType) {
   const onChangeHandler = (message: string) => {
     setChatMessage(message);
     if (message.length === 0) {
-      props.socket.emit("typing_status", activeConversation.conversationId, conversation[conversation.length - 1].message);
+      socket.emit("typing_status", activeConversation.conversationId, conversation[conversation.length - 1].message);
       return;
     }
-    props.socket.emit("typing_status", activeConversation.conversationId, "Typing");
+    socket.emit("typing_status", activeConversation.conversationId, "Typing");
   };
 
   const showEmojis = () => {};
