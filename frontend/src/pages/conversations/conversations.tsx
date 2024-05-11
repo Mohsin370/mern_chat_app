@@ -47,10 +47,6 @@ export default function Conversations(props: ConversationPropsType) {
       messagesEndRef.current.scrollTop = scrollHeight;
     }
   };
-  // socket.on("users", (users) => {
-  //   console.log("Users array received", users);
-  //   setOnlineUsers([...users]); //update states with online users
-  // });
 
   useEffect(() => {
     getConversations(activeConversation.conversationId);
@@ -62,9 +58,6 @@ export default function Conversations(props: ConversationPropsType) {
       if (activeConversation.conversationId !== messageData.conversationId) return;
       setConversation((prev) => (prev ? [...prev, messageData] : [messageData]));
     });
-    // socket.onAny((event, ...args) => {
-    //   console.log(event, args);
-    // });
 
     return () => {
       setConversation([
