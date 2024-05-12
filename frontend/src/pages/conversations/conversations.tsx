@@ -7,6 +7,7 @@ import { AxiosError } from "axios";
 import { GetConversations } from "../../api/conversations";
 import { ChatContext } from "../../context/chat/chatContext";
 import socket from "../../config/socketConfig";
+import EmojiPicker from "emoji-picker-react";
 
 type User = {
   name: string;
@@ -38,6 +39,7 @@ export default function Conversations(props: ConversationPropsType) {
   const { user } = useContext(AuthContext);
   const { activeConversation, setActiveConversation, onlineUsers } = useContext(ChatContext);
   const [conversation, setConversation] = useState<Message[]>([]);
+  const [showEmoji, setShowEmoji] = useState<boolean>(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -51,6 +53,7 @@ export default function Conversations(props: ConversationPropsType) {
   useEffect(() => {
     getConversations(activeConversation.conversationId);
     setChatMessage("");
+    setShowEmoji(false);
     console.log(socket.id);
 
     socket.on("receive_message", (messageData) => {
@@ -133,8 +136,6 @@ export default function Conversations(props: ConversationPropsType) {
     socket.emit("typing_status", activeConversation.conversationId, "Typing");
   };
 
-  const showEmojis = () => {};
-
   return (
     <div className="h-full px-2">
       <div className="w-100 flex px-5">
@@ -177,11 +178,21 @@ export default function Conversations(props: ConversationPropsType) {
             placeholder="Write a message..."
             value={chatMessage}
             onChange={(e) => onChangeHandler(e.target.value)}
+            onClick={() => setShowEmoji(false)}
           />
-          <div className="bg-white focus:shadow-secondary text-secondary border-y pr-1 flex">
-            <FaceSmileIcon className="w-8 items-center hover:cursor-pointer " onClick={showEmojis} />
+          <div className="relative bg-white focus:shadow-secondary text-secondary border-y pr-1 flex">
+            <FaceSmileIcon className="w-8 items-center hover:cursor-pointer " onClick={() => setShowEmoji(!showEmoji)} />
+            <div className=" absolute bottom-16 right-0">
+              <EmojiPicker
+                open={showEmoji}
+                onEmojiClick={(el) => {
+                  console.log(chatMessage);
+                  setChatMessage(chatMessage + el.emoji);
+                }}
+              />
+            </div>
           </div>
-          {/* <EmojiPicker className="absolute top-0 left-0"></EmojiPicker> */}
+
           <button type="submit" className=" bg-secondary text-white px-7 py-2 rounded-sm">
             <PaperAirplaneIcon className="h-6" />
           </button>
