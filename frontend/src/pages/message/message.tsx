@@ -69,7 +69,17 @@ export const MessageModule = () => {
       }
     });
     getUserConversations();
-  }, [activeConversation, selectedConversation, onlineUsers]);
+  }, [activeConversation, selectedConversation]);
+
+  useEffect(() => {
+    users.map((user: User) => {
+      if (onlineUsers.find((ou) => user._id === ou.userId)) {
+        user.online = true;
+      }
+    });
+
+    setUser(users);
+  }, [onlineUsers]);
 
   const getUserConversations = () => {
     GetUserConversations(user.id).then((res: AxiosResponse) => {
