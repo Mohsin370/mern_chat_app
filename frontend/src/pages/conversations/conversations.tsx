@@ -72,7 +72,7 @@ export default function Conversations(props: ConversationPropsType) {
       ]);
       socket.off("receive_message");
     };
-  }, [activeConversation, socket, onlineUsers]);
+  }, [activeConversation]);
 
   useEffect(() => {
     scrollToBottom();
@@ -116,7 +116,7 @@ export default function Conversations(props: ConversationPropsType) {
               receiver: activeConversation.receiver,
             });
           }
-          console.log("message sent");
+          console.log("message sent to: ", messageData);
           socket.emit("send_message", messageData);
         }
       })
