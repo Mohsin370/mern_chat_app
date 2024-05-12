@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import ProfileImg from "../../components/profileImg";
-import { PaperAirplaneIcon } from "@heroicons/react/16/solid";
+import { PaperAirplaneIcon, FaceSmileIcon } from "@heroicons/react/16/solid";
 import { SendMessage } from "../../api/chat";
 import { AuthContext } from "../../context/auth/authContext";
 import { AxiosError } from "axios";
 import { GetConversations } from "../../api/conversations";
 import { ChatContext } from "../../context/chat/chatContext";
-import { Socket } from "socket.io-client";
+import socket from "../../config/socketConfig";
 
 type User = {
   name: string;
@@ -31,14 +31,14 @@ interface Message {
 
 interface ConversationPropsType {
   conversation: Conversation<User>;
-  socket: Socket;
 }
 
 export default function Conversations(props: ConversationPropsType) {
   const [chatMessage, setChatMessage] = useState<string>("");
   const { user } = useContext(AuthContext);
-  const { activeConversation, setActiveConversation } = useContext(ChatContext);
+  const { activeConversation, setActiveConversation, onlineUsers } = useContext(ChatContext);
   const [conversation, setConversation] = useState<Message[]>([]);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -49,16 +49,15 @@ export default function Conversations(props: ConversationPropsType) {
   };
 
   useEffect(() => {
-    console.log("effect", props.socket.id);
     getConversations(activeConversation.conversationId);
+    setChatMessage("");
+    console.log(socket.id);
 
-    props.socket.on("receive_message", (messageData) => {
-      console.log("receiver message received as :", messageData.conversationId, activeConversation.conversationId);
+    socket.on("receive_message", (messageData) => {
+      console.log(messageData);
       if (activeConversation.conversationId !== messageData.conversationId) return;
       setConversation((prev) => (prev ? [...prev, messageData] : [messageData]));
     });
-
-    scrollToBottom();
 
     return () => {
       setConversation([
@@ -68,17 +67,17 @@ export default function Conversations(props: ConversationPropsType) {
           receiver: "",
         },
       ]);
-      props.socket.off("receive_message");
+      socket.off("receive_message");
     };
-  }, [activeConversation, props.socket]);
+  }, [activeConversation, socket, onlineUsers]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [conversation]);
 
   const getConversations = (conversationId: string) => {
-    console.log(conversationId);
     GetConversations(conversationId)
       .then((res) => {
-        console.log(res.data);
-        scrollToBottom();
-
         if (res.data.conversation[0]) {
           setConversation(res.data.conversation[0].messages);
         } else {
@@ -94,11 +93,13 @@ export default function Conversations(props: ConversationPropsType) {
     event.preventDefault();
     if (chatMessage.length === 0) return;
 
+    console.log("oneline users", onlineUsers);
     const messageData = {
       sender: user.id,
       receiver: activeConversation.receiver,
       message: chatMessage,
       conversationId: activeConversation.conversationId,
+      receiverSocketId: onlineUsers.find((user) => user.userId === activeConversation.receiver)?.socketId,
     };
 
     setConversation((prev) => (prev ? [...prev, messageData] : [messageData]));
@@ -113,13 +114,12 @@ export default function Conversations(props: ConversationPropsType) {
             });
           }
           console.log("message sent");
-          props.socket.emit("send_message", messageData);
+          socket.emit("send_message", messageData);
         }
       })
       .catch((error: AxiosError) => {
         console.log(error);
       });
-    scrollToBottom();
 
     setChatMessage("");
   };
@@ -127,11 +127,13 @@ export default function Conversations(props: ConversationPropsType) {
   const onChangeHandler = (message: string) => {
     setChatMessage(message);
     if (message.length === 0) {
-      props.socket.emit("typing_status", activeConversation.conversationId, conversation[conversation.length - 1].message);
+      socket.emit("typing_status", activeConversation.conversationId, conversation[conversation.length - 1].message);
       return;
     }
-    props.socket.emit("typing_status", activeConversation.conversationId, "Typing");
+    socket.emit("typing_status", activeConversation.conversationId, "Typing");
   };
+
+  const showEmojis = () => {};
 
   return (
     <div className="h-full px-2">
@@ -142,27 +144,27 @@ export default function Conversations(props: ConversationPropsType) {
       <hr className="my-4" />
 
       <div className="bg-gray-100 h-[94%] px-5 py-5 relative rounded-sm">
-        <div className="h-[90%] overflow-y-auto" ref={messagesEndRef}>
+        <div className="h-[90%] overflow-y-auto scrollbar pr-3" ref={messagesEndRef}>
           {conversation?.map((el, key) => (
             <div key={key}>
               {el.sender === user.id ? (
-                <div className="justify-end flex my-3 items-center">
+                <div className="justify-end flex my-3 place-items-start">
                   <div className="flex flex-col items-end">
                     <p className="pr-1 text-right">{user.name}</p>
-                    <p className=" bg-secondary text-white rounded p-2 w-fit whitespace-pre-wrap">{el.message}</p>
+                    <p className=" bg-secondary text-white rounded p-2 whitespace-pre-wrap break-all max-w-[400px]">{el.message}</p>
                   </div>
-                  <div className="ml-2">
+                  <div className="ml-2 pt-5">
                     <ProfileImg image="" name={user.name} />
                   </div>
                 </div>
               ) : (
-                <div className="justify-start flex my-3 items-center">
-                  <div className="mr-2">
+                <div className="justify-start flex my-3 place-items-start">
+                  <div className="mr-2 pt-5">
                     <ProfileImg image="" name={props.conversation.user.name} />
                   </div>
                   <div>
                     <p className="pl-1">{props.conversation.user.name}</p>
-                    <p className=" bg-gray-300 rounded p-2 w-fit whitespace-pre-wrap">{el.message}</p>
+                    <p className=" bg-gray-300 rounded p-2 w-fit whitespace-pre-wrap break-all max-w-[400px]">{el.message}</p>
                   </div>
                 </div>
               )}
@@ -171,11 +173,15 @@ export default function Conversations(props: ConversationPropsType) {
         </div>
         <form className="absolute left-0 bottom-0 justify-center flex w-full" onSubmit={(e) => sendMessage(e)}>
           <textarea
-            className="focus:outline-none focus:shadow-secondary px-3 py-2 w-full border border-violet-100 resize-none overflow-hidden"
+            className="focus:outline-none focus:shadow-secondary px-3 py-2 w-full border border-r-0 border-violet-100 resize-none overflow-hidden"
             placeholder="Write a message..."
             value={chatMessage}
             onChange={(e) => onChangeHandler(e.target.value)}
           />
+          <div className="bg-white focus:shadow-secondary text-secondary border-y pr-1 flex">
+            <FaceSmileIcon className="w-8 items-center hover:cursor-pointer " onClick={showEmojis} />
+          </div>
+          {/* <EmojiPicker className="absolute top-0 left-0"></EmojiPicker> */}
           <button type="submit" className=" bg-secondary text-white px-7 py-2 rounded-sm">
             <PaperAirplaneIcon className="h-6" />
           </button>

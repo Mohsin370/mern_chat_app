@@ -1,20 +1,19 @@
 import Axios from "axios";
-
-const baseURL = import.meta.env.VITE_REACT_API_URL + "/message";
+const BASE_API_URL = import.meta.env.VITE_REACT_API_URL + "/message";
 
 interface messageDataType {
   sender: string;
   receiver: string;
   message: string;
-  conversationId: string
+  conversationId: string;
 }
 
 const SendMessage = (data: messageDataType) => {
-  return Axios.post(`${baseURL}/`, data);
+  return Axios.post(BASE_API_URL + `/`, data);
 };
 
 const getMessages = (id: string) => {
-  return Axios.get(`${baseURL}/${id}`);
+  return Axios.get(BASE_API_URL + `/${id}`);
 };
 
 export { SendMessage, getMessages };

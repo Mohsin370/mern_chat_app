@@ -65,14 +65,15 @@ export default function Signup() {
             <Formik initialValues={{ email: "", password: "", name: "" }} onSubmit={(values) => userSignUp(values)} validationSchema={SignupSchema}>
               {({ errors, touched }) => (
                 <Form className="flex flex-wrap flex-col justify-center items-center mb-3">
-                  <Field className="w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" name="name" type="text" placeholder="Full Name" />
+                  <Field className="w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" name="name" type="text" placeholder="Full Name"/>
                   {touched.name && errors.name && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.name}</div>}
-                  <Field className="w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" name="email" type="text" placeholder="Email" />
+                  <Field className="w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" name="email" type="text" placeholder="Email"  autoComplete="email"/>
                   {touched.email && errors.email && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.email}</div>}
                   <div className="w-100 relative w-full">
                     <Field
                       className=" w-5/6 sm:w-full shadow p-2 my-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light"
                       name="password"
+                      autoComplete="current-password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
                     />

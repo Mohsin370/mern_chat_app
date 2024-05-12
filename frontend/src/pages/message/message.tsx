@@ -7,7 +7,7 @@ import { AxiosResponse } from "axios";
 import { GetUserConversations } from "../../api/conversations";
 import { AuthContext } from "../../context/auth/authContext";
 import { ChatContext } from "../../context/chat/chatContext";
-import { Socket } from "socket.io-client";
+import socket from "../../config/socketConfig";
 
 type User = {
   name: string;
@@ -15,6 +15,7 @@ type User = {
   _id: string;
   image: string;
   typing: string;
+  online: boolean;
 };
 
 interface Conversation<User> {
@@ -25,10 +26,6 @@ interface Conversation<User> {
   user: User;
 }
 
-type propsType = {
-  socket: Socket;
-};
-
 type socketMessage = {
   message: string;
   sender: string;
@@ -36,9 +33,9 @@ type socketMessage = {
   conversationId: string;
 };
 
-export const MessageModule = ({ socket }: propsType) => {
+export const MessageModule = () => {
   const { user } = useContext(AuthContext);
-  const { activeConversation, setActiveConversation } = useContext(ChatContext);
+  const { activeConversation, setActiveConversation, onlineUsers } = useContext(ChatContext);
   const [users, setUser] = useState<User[]>([]);
   // const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation<User>>();
@@ -62,11 +59,17 @@ export const MessageModule = ({ socket }: propsType) => {
   useEffect(() => {
     GetAllUsers(user.id).then((res: AxiosResponse) => {
       if (res.data.success) {
+        res.data.users.map((user: User) => {
+          if (onlineUsers.find((ou) => user._id === ou.userId)) {
+            user.online = true;
+          }
+        });
+
         setUser(res.data.users);
       }
     });
     getUserConversations();
-  }, [activeConversation, selectedConversation]);
+  }, [activeConversation, selectedConversation, onlineUsers]);
 
   const getUserConversations = () => {
     GetUserConversations(user.id).then((res: AxiosResponse) => {
@@ -77,7 +80,7 @@ export const MessageModule = ({ socket }: propsType) => {
   };
 
   const selectConversation = (conversation: Conversation<User>) => {
-    if(conversation._id === selectedConversation?._id) return;
+    if (conversation._id === selectedConversation?._id) return;
     setSelectedConversation(conversation);
     const newActiveConversation = {
       conversationId: conversation._id,
@@ -97,8 +100,8 @@ export const MessageModule = ({ socket }: propsType) => {
         user: user,
       };
     }
-    
-    if(conversation._id === selectedConversation?._id) return; 
+
+    if (conversation._id === selectedConversation?._id) return;
     setSelectedConversation(conversation);
     const newActiveConversation = {
       receiver: user._id,
@@ -124,7 +127,7 @@ export const MessageModule = ({ socket }: propsType) => {
         <div className="py-4 overflow-x-auto overflow-y-hidden whitespace-nowrap scrollbar">
           {users.map((user, key) => (
             <div className="inline-block cursor-pointer mb-2" onClick={() => findUserConversation(user)} key={key}>
-              <ProfileImg image={user.image} name={user.name} />
+              <ProfileImg image={user.image} name={user.name} online={user.online} />
             </div>
           ))}
         </div>
@@ -143,7 +146,7 @@ export const MessageModule = ({ socket }: propsType) => {
       </div>
       {selectedConversation && (
         <div className="hidden md:block w-full pb-5">
-          <Conversations socket={socket} conversation={selectedConversation} />
+          <Conversations conversation={selectedConversation} />
         </div>
       )}
     </div>

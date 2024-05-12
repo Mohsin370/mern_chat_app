@@ -1,11 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-const authorizeMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const authorizeMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.header("token");
     if (token == null) {
@@ -18,7 +14,6 @@ const authorizeMiddleware = async (
 
     const user = await jwt.verify(token, process.env.JWT_SECRET!);
     if (user) {
-      res.locals.user = user;
       next();
     } else {
       res.status(401).send({
