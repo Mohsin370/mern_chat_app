@@ -13,11 +13,7 @@ export default function ProfileImg(props: propsType) {
 
   const nameInitials = () => {
     if (!props.name) return;
-    let name = props.name;
-    let nameArr = name.split(" ");
-
-    let initials: string = (nameArr.shift()?.[0] || "") + (nameArr.pop()?.[0] || "");
-    return initials.toUpperCase();
+    return (props.name.split(" ").shift()?.[0] || "") + (props.name.split(" ").pop()?.[0] || "").toUpperCase();
   };
 
   return (
