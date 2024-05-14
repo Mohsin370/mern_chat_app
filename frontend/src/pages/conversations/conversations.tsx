@@ -152,7 +152,7 @@ export default function Conversations(props: ConversationPropsType) {
                 <div className="justify-end flex my-3 place-items-start">
                   <div className="flex flex-col items-end">
                     <p className="pr-1 text-right">{user.name}</p>
-                    <p className=" bg-secondary text-white rounded p-2 whitespace-pre-wrap break-all max-w-[400px]">{el.message}</p>
+                    <p className=" bg-secondary text-white rounded-tl-lg rounded-b-lg p-2 pl-3 whitespace-pre-wrap break-all max-w-[400px]">{el.message}</p>
                   </div>
                   <div className="ml-2 pt-5">
                     <ProfileImg image="" name={user.name} />
@@ -165,14 +165,14 @@ export default function Conversations(props: ConversationPropsType) {
                   </div>
                   <div>
                     <p className="pl-1">{props.conversation.user.name}</p>
-                    <p className=" bg-gray-300 rounded p-2 w-fit whitespace-pre-wrap break-all max-w-[400px]">{el.message}</p>
+                    <p className=" bg-gray-300 rounded-tr-lg rounded-b-lg p-2 pr-3 w-fit whitespace-pre-wrap break-all max-w-[400px]">{el.message}</p>
                   </div>
                 </div>
               )}
             </div>
           ))}
         </div>
-        <form className="absolute left-0 bottom-0 justify-center flex w-full" onSubmit={(e) => sendMessage(e)}>
+        <form className="absolute left-0 bottom-0 justify-center flex w-full" onSubmit={(e) => sendMessage(e)} onKeyDown={(e) => e.key === "Enter"? sendMessage(e):""}>
           <textarea
             className="focus:outline-none focus:shadow-secondary px-3 py-2 w-full border border-r-0 border-violet-100 resize-none overflow-hidden"
             placeholder="Write a message..."
