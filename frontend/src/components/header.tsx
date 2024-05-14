@@ -12,10 +12,7 @@ export default function Header() {
               </Link>
             </li>
             <li>
-              <Link to="/about">About us</Link>
-            </li>
-            <li>
-              <Link to="/contact">Contact</Link>
+              <Link target="blank" to="https://github.com/Mohsin370">Contact Me</Link>
             </li>
           </ul>
         </div>
