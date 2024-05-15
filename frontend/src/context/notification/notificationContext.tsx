@@ -2,13 +2,13 @@ import { createContext, useState, Dispatch, SetStateAction, ReactNode } from "re
 
 export type Notification = {
   message: string;
-  type: string;
+  type: "success" | "error";
   show: boolean;
 };
 
 const initNotification: Notification = {
   message: "",
-  type: "",
+  type: "success",
   show: false,
 };
 
