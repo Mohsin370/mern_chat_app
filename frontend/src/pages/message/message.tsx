@@ -134,8 +134,8 @@ export const MessageModule = () => {
   };
 
   return (
-    <div className="m-auto md:w-[95%] flex h-[95%] px-2 md:my-10 my-4">
-      <div className={`${selectedConversation?"hidden md:block":"block"} w-full md:max-w-sm mr-2 flex flex-col`}>
+    <div className="m-auto flex h-full">
+      <div className={`${selectedConversation?"hidden md:block":"block"} w-full md:max-w-sm mr-2 flex flex-col px-5`}>
         <div className="flex items-center justify-between py-auto my-5">
           <h5 className=" font-extrabold text-2xl">Messages</h5>
           <span className="cursor-pointer">

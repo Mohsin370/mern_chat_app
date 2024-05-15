@@ -151,7 +151,7 @@ export default function Conversations(props: ConversationPropsType) {
   };
 
   return (
-    <div className="h-full px-2">
+    <div className="h-full">
       <div className="w-100 flex justify-between px-5 border py-4 border-gray-200">
         <div className="flex">
           <ProfileImg
