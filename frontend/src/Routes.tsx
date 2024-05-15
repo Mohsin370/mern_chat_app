@@ -44,7 +44,7 @@ const privateRoutes = [
   },
   {
     path: "*",
-    element: <FallBack />,
+    element: <Navigate to="/chat" replace />,
   },
 ];
 

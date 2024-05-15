@@ -8,6 +8,8 @@ import { GetUserConversations } from "../../api/conversations";
 import { AuthContext } from "../../context/auth/authContext";
 import { ChatContext } from "../../context/chat/chatContext";
 import socket from "../../config/socketConfig";
+import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/16/solid";
+import { useNavigate } from "react-router-dom";
 
 type User = {
   name: string;
@@ -34,11 +36,12 @@ type socketMessage = {
 };
 
 export const MessageModule = () => {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const { activeConversation, setActiveConversation, onlineUsers } = useContext(ChatContext);
-  const [users, setUser] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   // const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation<User>>();
+  const navigate = useNavigate();
 
   const [chatTabs, setChatTabs] = useState<Conversation<User>[]>([]);
 
@@ -65,7 +68,7 @@ export const MessageModule = () => {
           }
         });
 
-        setUser(res.data.users);
+        setUsers(res.data.users);
       }
     });
     getUserConversations();
@@ -78,7 +81,7 @@ export const MessageModule = () => {
       }
     });
 
-    setUser(users);
+    setUsers(users);
   }, [onlineUsers]);
 
   const getUserConversations = () => {
@@ -119,13 +122,26 @@ export const MessageModule = () => {
     };
     setActiveConversation(newActiveConversation);
   };
+  const logout = () => {
+    localStorage.removeItem("user");
+    setUser({
+      name: "",
+      email: "",
+      id: "",
+      token: "",
+    });
+    navigate("/");
+  };
 
   return (
-    <div className="m-auto w-[95%] flex h-5/6 px-2 my-10">
-      <div className="w-full md: max-w-sm mr-2 flex flex-col">
+    <div className="m-auto md:w-[95%] flex h-[95%] px-2 md:my-10 my-4">
+      <div className={`${selectedConversation?"hidden md:block":"block"} w-full md:max-w-sm mr-2 flex flex-col`}>
         <div className="flex items-center justify-between py-auto my-5">
           <h5 className=" font-extrabold text-2xl">Messages</h5>
-          <span className="cursor-pointer">...</span>
+          <span className="cursor-pointer">
+            
+          <ArrowLeftEndOnRectangleIcon className="w-10 text-secondary" onClick={logout}/>
+          </span>
         </div>
         <div>
           <input className="bg-slate-100 w-full rounded px-2 py-2 focus:outline-none focus:shadow-secondary-light" placeholder="Search..." />
@@ -155,7 +171,7 @@ export const MessageModule = () => {
         </div>
       </div>
       {selectedConversation && (
-        <div className="hidden md:block w-full pb-5">
+        <div className="w-full pb-5">
           <Conversations conversation={selectedConversation} />
         </div>
       )}

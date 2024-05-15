@@ -158,7 +158,7 @@ export default function Conversations(props: ConversationPropsType) {
             image={props.conversation.user.image}
             name={props.conversation.user.name}
           />
-          <h3 className=" text-3xl font-bold">
+          <h3 className="text-lg font-bold">
             {props.conversation.user.name}
           </h3>
         </div>
