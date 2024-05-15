@@ -3,14 +3,16 @@
 @tailwind utilities;
 @font-face{
     font-family: 'Gilroy Bold';
-    src: local('Gilroy Bold'), url(./fonts/Gilroy-ExtraBold.otf);
+    src: local('Gilroy Bold'), url(./fonts/Gilroy-ExtraBold.otf), format('otf');
 }
 
 @font-face{
     font-family: 'Gilroy';
-    src: local('Gilroy'), url(./fonts/Gilroy-Light.otf);
+    src: local('Gilroy'), url(./fonts/Gilroy-Regular.ttf), format('ttf');
 }
 
 *{
-    font-family: 'gilroy';
+    font-family: 'Gilroy', Arial, sans-serif;
 }
+
+
