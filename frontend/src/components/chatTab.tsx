@@ -19,7 +19,7 @@ const ChatTab = (props: tabProps) => {
         <div className="flex flex-col">
           <span className="font-bold tracking-wider">{props.name}</span>
           {props.lastMsg ? (
-            <span className="text-xs text-gray-400">{props.lastMsg}</span>
+            <span className="text-xs">{props.lastMsg}</span>
           ) : (
             <span className="text-xs text-secondary">{props.typing}</span>
           )}

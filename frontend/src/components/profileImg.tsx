@@ -27,7 +27,7 @@ export default function ProfileImg(props: propsType) {
         <div className="flex">
           <span className=" relative text-center text-white bg-secondary w-10 h-10 p-2 mr-1 rounded-full">
             {nameInitials()}
-            {props.online && <div className=" bg-green-500 w-2 h-2 rounded-full absolute right-1 bottom-0.5 border  border-gray-950"></div>}
+            {props.online && <div className=" bg-green-500 w-2 h-2 rounded-full absolute right-1 bottom-0.5 border border-white"></div>}
           </span>
         </div>
       )}

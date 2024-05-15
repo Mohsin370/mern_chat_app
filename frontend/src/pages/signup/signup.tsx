@@ -12,7 +12,7 @@ import { EyeSlashIcon, EyeIcon } from "@heroicons/react/16/solid";
 
 const SignupSchema = () => {
   return Yup.object().shape({
-    name: Yup.string().required("Name is required").min(2, "Minimum two charachrters are required"),
+    name: Yup.string().required("Name is required").min(3, "Minimum three charachrters are required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string().required("Password is required").min(8, "Mnimum 8 charachters are required"),
   });

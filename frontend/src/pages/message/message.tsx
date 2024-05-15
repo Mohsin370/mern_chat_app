@@ -26,6 +26,7 @@ interface Conversation<User> {
   updatedAt: string;
   __v: number;
   user: User;
+  lastMessage?: string;
 }
 
 type socketMessage = {
@@ -170,7 +171,7 @@ export const MessageModule = () => {
                 key={key}
                 onClick={() => selectConversation(tab)}
               >
-                <ChatTab name={tab.user.name} time={""} image={tab.user.image} lastMsg={""} typing={tab.user.typing} />
+                <ChatTab name={tab.user.name} time={""} image={tab.user.image} lastMsg={tab.lastMessage??""} typing={tab.user.typing} />
               </div>
             );
           })}
