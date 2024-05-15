@@ -6,7 +6,7 @@ import { ArrowRightIcon } from "@heroicons/react/16/solid";
 export default function landing() {
   return (
     <article className="pros prose-xl">
-      <div className="flex flex-col max-h-dvh lg:w-3/4 mx-auto w-11/12 overflow-hidden">
+      <div className="flex flex-col max-h-dvh mx-auto w-11/12 overflow-hidden">
         <Header />
         <div className="xl:grid grid-cols-2 items-center md:my-10">
           <div className="xl:block flex flex-col justify-center items-center">
@@ -27,7 +27,7 @@ export default function landing() {
               </button>
             </Link>
           </div>
-          <div className="m-auto w-full">
+          <div className="m-auto xl:w-full md:w-2/3">
             <img className="hidden md:block m-auto" src={landingSVG} alt="landing" />
           </div>
         </div>
