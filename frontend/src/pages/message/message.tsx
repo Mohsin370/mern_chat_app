@@ -75,13 +75,16 @@ export const MessageModule = () => {
   }, [activeConversation, selectedConversation]);
 
   useEffect(() => {
-    users.map((user: User) => {
+    const updatedUsers = users.map((user: User) => {
       if (onlineUsers.find((ou) => user._id === ou.userId)) {
         user.online = true;
+      } else {
+        user.online = false;
       }
+      return user;
     });
 
-    setUsers(users);
+    setUsers(updatedUsers);
   }, [onlineUsers]);
 
   const getUserConversations = () => {
@@ -135,12 +138,11 @@ export const MessageModule = () => {
 
   return (
     <div className="m-auto flex h-full flex-col-2 divide-x divide-secondary-light">
-      <div className={`${selectedConversation?"hidden md:block":"block"} w-full md:max-w-sm flex flex-col px-5`}>
+      <div className={`${selectedConversation ? "hidden md:block" : "block"} w-full md:max-w-sm flex flex-col px-5`}>
         <div className="flex items-center justify-between py-auto my-5">
           <h5 className=" font-extrabold text-2xl">Messages</h5>
           <span className="cursor-pointer">
-            
-          <ArrowLeftEndOnRectangleIcon className="w-10 text-secondary" onClick={logout}/>
+            <ArrowLeftEndOnRectangleIcon className="w-10 text-secondary" onClick={logout} />
           </span>
         </div>
         <div>
@@ -163,7 +165,11 @@ export const MessageModule = () => {
         <div className="mt-6 overflow-x-auto h-full scrollbar">
           {chatTabs?.map((tab, key) => {
             return (
-              <div className={`px-2  cursor-pointer pt-2 rounded-md ${activeConversation.conversationId === tab._id ? "bg-violet-400 text-white" : ""} `} key={key} onClick={() => selectConversation(tab)}>
+              <div
+                className={`px-2  cursor-pointer pt-2 rounded-md ${activeConversation.conversationId === tab._id ? "bg-violet-400 text-white" : ""} `}
+                key={key}
+                onClick={() => selectConversation(tab)}
+              >
                 <ChatTab name={tab.user.name} time={""} image={tab.user.image} lastMsg={""} typing={tab.user.typing} />
               </div>
             );
