@@ -4,7 +4,7 @@ import {
   PaperAirplaneIcon,
   FaceSmileIcon,
   PhoneArrowUpRightIcon,
-} from "@heroicons/react/16/solid";
+} from "@heroicons/react/24/outline";
 import { SendMessage } from "../../api/chat";
 import { AuthContext } from "../../context/auth/authContext";
 import { AxiosError } from "axios";
@@ -166,8 +166,6 @@ export default function Conversations(props: ConversationPropsType) {
 
         <PhoneArrowUpRightIcon className="w-10 bg-secondary text-white p-2 rounded hover:cursor-pointer" />
       </div>
-      {/* <hr className="my-4" /> */}
-
       <div className="bg-gray-100 h-[94%] px-5 relative rounded-sm">
         <div
           className="h-[91%] overflow-y-auto scrollbar pr-3"
@@ -214,6 +212,7 @@ export default function Conversations(props: ConversationPropsType) {
             value={chatMessage}
             onChange={(e) => onChangeHandler(e.target.value)}
             onClick={() => setShowEmoji(false)}
+            contentEditable={true}
           />
           <div className="relative bg-white focus:shadow-secondary text-secondary border-y pr-1 flex">
             <FaceSmileIcon

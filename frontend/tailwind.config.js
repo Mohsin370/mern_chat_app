@@ -6,6 +6,7 @@ export default {
       fontFamily: {
         "gilroy-bold": ["Gilroy Bold"],
         gilroy: ["Gilroy"],
+        "gilroy-medium": ['Gilroy Medium']
       },
       colors: {
         primary: {

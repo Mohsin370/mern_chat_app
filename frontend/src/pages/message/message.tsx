@@ -134,8 +134,8 @@ export const MessageModule = () => {
   };
 
   return (
-    <div className="m-auto flex h-full">
-      <div className={`${selectedConversation?"hidden md:block":"block"} w-full md:max-w-sm mr-2 flex flex-col px-5`}>
+    <div className="m-auto flex h-full flex-col-2 divide-x divide-secondary-light">
+      <div className={`${selectedConversation?"hidden md:block":"block"} w-full md:max-w-sm flex flex-col px-5`}>
         <div className="flex items-center justify-between py-auto my-5">
           <h5 className=" font-extrabold text-2xl">Messages</h5>
           <span className="cursor-pointer">
@@ -163,7 +163,7 @@ export const MessageModule = () => {
         <div className="mt-6 overflow-x-auto h-full scrollbar">
           {chatTabs?.map((tab, key) => {
             return (
-              <div className={`px-2  cursor-pointer pt-2 rounded-md ${activeConversation.conversationId === tab._id ? "bg-gray-100 " : ""} `} key={key} onClick={() => selectConversation(tab)}>
+              <div className={`px-2  cursor-pointer pt-2 rounded-md ${activeConversation.conversationId === tab._id ? "bg-violet-400 text-white" : ""} `} key={key} onClick={() => selectConversation(tab)}>
                 <ChatTab name={tab.user.name} time={""} image={tab.user.image} lastMsg={""} typing={tab.user.typing} />
               </div>
             );

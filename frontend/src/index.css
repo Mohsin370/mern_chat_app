@@ -10,6 +10,10 @@
     font-family: 'Gilroy';
     src: local('Gilroy'), url(./fonts/Gilroy-Regular.ttf), format('ttf');
 }
+@font-face{
+    font-family: 'Gilroy Medium';
+    src: local('Gilroy Medium'), url(./fonts/Gilroy-Medium.ttf), format('ttf');
+}
 
 *{
     font-family: 'Gilroy', Arial, sans-serif;

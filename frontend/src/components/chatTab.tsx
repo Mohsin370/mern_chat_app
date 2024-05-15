@@ -17,7 +17,7 @@ const ChatTab = (props: tabProps) => {
 
       <div className="flex justify-between w-full">
         <div className="flex flex-col">
-          <span className=" font-bold">{props.name}</span>
+          <span className="font-bold tracking-wider">{props.name}</span>
           {props.lastMsg ? (
             <span className="text-xs text-gray-400">{props.lastMsg}</span>
           ) : (
