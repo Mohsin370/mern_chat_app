@@ -135,6 +135,7 @@ export default function Conversations(props: ConversationPropsType) {
       });
 
     setChatMessage("");
+    setShowEmoji(false);
   };
 
   const onChangeHandler = (message: string) => {
