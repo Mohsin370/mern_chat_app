@@ -52,7 +52,6 @@ const getUserConversations = async (req: Request, res: Response) => {
       {
         $project: {
           _id: 1,
-          messages: 1,
           createdAt: 1,
           updatedAt: 1,
           user: {
@@ -63,6 +62,38 @@ const getUserConversations = async (req: Request, res: Response) => {
                   as: "user",
                   cond: { $ne: ["$$user._id", userId] },
                 },
+              },
+              0,
+            ],
+          },
+          lastMessageId: {
+            $arrayElemAt: [
+              {
+                $slice: ["$messages", -1], // Get the last element of the "messages" array
+              },
+              0,
+            ],
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "messages",
+          localField: "lastMessageId",
+          foreignField: "_id",
+          as: "lastMessage",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          user: 1,
+          "lastMessage": {
+            $arrayElemAt: [
+              {
+                $slice: ["$lastMessage.message", -1], // Get the last element of the "messages" array
               },
               0,
             ],
