@@ -71,13 +71,7 @@ export default function Conversations(props: ConversationPropsType) {
     });
 
     return () => {
-      setConversation([
-        {
-          message: "",
-          sender: "",
-          receiver: "",
-        },
-      ]);
+      setConversation([]);
       socket.off("receive_message");
     };
   }, [activeConversation]);
