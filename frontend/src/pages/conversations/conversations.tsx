@@ -132,8 +132,8 @@ export default function Conversations(props: ConversationPropsType) {
   };
 
   return (
-    <div className="h-full">
-      <div className="w-100 flex justify-between border border-gray-200 px-5 py-4">
+    <div className="h-full sm:h-dvh">
+      <div className="flex justify-between border border-gray-200 px-5 py-4">
         <div className="flex">
           <ProfileImg image={props.conversation.user.image} name={props.conversation.user.name} />
           <h3 className="text-lg font-bold">{props.conversation.user.name}</h3>
@@ -142,7 +142,7 @@ export default function Conversations(props: ConversationPropsType) {
         <PhoneArrowUpRightIcon className="w-10 rounded bg-secondary p-2 text-white hover:cursor-pointer" />
       </div>
       <div className="relative h-[94%] rounded-sm bg-gray-100 px-5">
-        <div className="h-[91%] overflow-y-auto pr-3 scrollbar" ref={messagesEndRef}>
+        <div className="h-[calc(100%-70px)] overflow-y-auto pr-3 scrollbar" ref={messagesEndRef}>
           {conversation?.map((el, key) => (
             <div key={key}>
               {el.sender === user.id ? (
@@ -172,7 +172,7 @@ export default function Conversations(props: ConversationPropsType) {
           ))}
         </div>
         <form
-          className="absolute bottom-0 left-0 flex w-full justify-center"
+          className="absolute bottom-0 left-0 flex w-full justify-center h-16"
           onSubmit={(e) => sendMessage(e)}
           onKeyDown={(e) => (e.key === "Enter" ? sendMessage(e) : "")}
         >
