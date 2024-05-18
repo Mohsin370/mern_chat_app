@@ -1,4 +1,4 @@
-// import React from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import Routes from "./Routes";
@@ -9,6 +9,7 @@ import { ChatContextProvider } from "./context/chat/chatContext";
 import { Analytics } from "@vercel/analytics/react"
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
     <NotificationProvider>
       <AuthContextProvider>
         <ChatContextProvider>
@@ -18,4 +19,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       </AuthContextProvider>
       <Notification />
     </NotificationProvider>
+  </React.StrictMode>
 );
