@@ -54,37 +54,54 @@ export default function Signup() {
   };
   return (
     <article className="pros prose-xl">
-      <div className="lg:w-3/4 mx-auto w-11/12">
-        <div className="sm:flex flex-wrap flex-col justify-center min-h-screen items-center ">
-          <div className="py-10 sm:shadow-xl sm:p-32 text-center rounded">
-            <Link to="/" className="text-5xl font-gilroy-bold cursor-pointer text-secondary">
+      <div className="mx-auto w-11/12 lg:w-3/4">
+        <div className="min-h-screen flex-col flex-wrap items-center justify-center sm:flex ">
+          <div className="rounded py-10 text-center sm:p-32 sm:shadow-xl">
+            <Link to="/" className="cursor-pointer font-gilroy-bold text-5xl text-secondary">
               Ping
             </Link>
             <h3>Create a new account</h3>
             <h4>Please enter your details to register.</h4>
             <Formik initialValues={{ email: "", password: "", name: "" }} onSubmit={(values) => userSignUp(values)} validationSchema={SignupSchema}>
               {({ errors, touched }) => (
-                <Form className="flex flex-wrap flex-col justify-center items-center mb-3">
-                  <Field className="w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" name="name" type="text" placeholder="Full Name"/>
-                  {touched.name && errors.name && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.name}</div>}
-                  <Field className="w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" name="email" type="text" placeholder="Email"  autoComplete="email"/>
-                  {touched.email && errors.email && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.email}</div>}
+                <Form className="mb-3 flex flex-col flex-wrap items-center justify-center">
+                  <Field
+                    className="m-3 w-5/6 border p-2 text-gray-700 shadow focus:shadow-secondary-light focus:outline-none sm:w-full"
+                    name="name"
+                    type="text"
+                    placeholder="Full Name"
+                  />
+                  {touched.name && errors.name && <div className="w-5/6 text-left text-red-600 sm:w-full">{errors.name}</div>}
+                  <Field
+                    className="m-3 w-5/6 border p-2 text-gray-700 shadow focus:shadow-secondary-light focus:outline-none sm:w-full"
+                    name="email"
+                    type="text"
+                    placeholder="Email"
+                    autoComplete="email"
+                  />
+                  {touched.email && errors.email && <div className="w-5/6 text-left text-red-600 sm:w-full">{errors.email}</div>}
                   <div className="w-100 relative w-full">
                     <Field
-                      className=" w-5/6 sm:w-full shadow p-2 my-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light"
+                      className=" my-3 w-5/6 border p-2 text-gray-700 shadow focus:shadow-secondary-light focus:outline-none sm:w-full"
                       name="password"
                       autoComplete="current-password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
                     />
                     {showPassword ? (
-                      <EyeSlashIcon className="absolute right-0 top-0 h-full w-9 text-secondary hover:cursor-pointer" onClick={() => setShowPassword(false)} />
+                      <EyeSlashIcon
+                        className="absolute right-0 top-0 h-full w-9 text-secondary hover:cursor-pointer"
+                        onClick={() => setShowPassword(false)}
+                      />
                     ) : (
-                      <EyeIcon className="absolute right-0 top-0 h-full text-secondary w-9 hover:cursor-pointer" onClick={() => setShowPassword(true)} />
+                      <EyeIcon
+                        className="absolute right-0 top-0 h-full w-9 text-secondary hover:cursor-pointer"
+                        onClick={() => setShowPassword(true)}
+                      />
                     )}
                   </div>
-                  {touched.password && errors.password && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.password}</div>}
-                  <button className="bg-secondary text-white py-2 px-8 rounded-sm m-3" type="submit">
+                  {touched.password && errors.password && <div className="w-5/6 text-left text-red-600 sm:w-full">{errors.password}</div>}
+                  <button className="m-3 rounded-sm bg-secondary px-8 py-2 text-white" type="submit">
                     Register
                   </button>
                 </Form>

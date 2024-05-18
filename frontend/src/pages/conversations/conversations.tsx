@@ -1,10 +1,6 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import ProfileImg from "../../components/profileImg";
-import {
-  PaperAirplaneIcon,
-  FaceSmileIcon,
-  PhoneArrowUpRightIcon,
-} from "@heroicons/react/24/outline";
+import { PaperAirplaneIcon, FaceSmileIcon, PhoneArrowUpRightIcon } from "@heroicons/react/24/outline";
 import { SendMessage } from "../../api/chat";
 import { AuthContext } from "../../context/auth/authContext";
 import { AxiosError } from "axios";
@@ -41,8 +37,7 @@ interface ConversationPropsType {
 export default function Conversations(props: ConversationPropsType) {
   const [chatMessage, setChatMessage] = useState<string>("");
   const { user } = useContext(AuthContext);
-  const { activeConversation, setActiveConversation, onlineUsers } =
-    useContext(ChatContext);
+  const { activeConversation, setActiveConversation, onlineUsers } = useContext(ChatContext);
   const [conversation, setConversation] = useState<Message[]>([]);
   const [showEmoji, setShowEmoji] = useState<boolean>(false);
 
@@ -63,11 +58,8 @@ export default function Conversations(props: ConversationPropsType) {
 
     socket.on("receive_message", (messageData) => {
       console.log(messageData);
-      if (activeConversation.conversationId !== messageData.conversationId)
-        return;
-      setConversation((prev) =>
-        prev ? [...prev, messageData] : [messageData]
-      );
+      if (activeConversation.conversationId !== messageData.conversationId) return;
+      setConversation((prev) => (prev ? [...prev, messageData] : [messageData]));
     });
 
     return () => {
@@ -104,9 +96,7 @@ export default function Conversations(props: ConversationPropsType) {
       receiver: activeConversation.receiver,
       message: chatMessage,
       conversationId: activeConversation.conversationId,
-      receiverSocketId: onlineUsers.find(
-        (user) => user.userId === activeConversation.receiver
-      )?.socketId,
+      receiverSocketId: onlineUsers.find((user) => user.userId === activeConversation.receiver)?.socketId,
     };
 
     setConversation((prev) => (prev ? [...prev, messageData] : [messageData]));
@@ -135,11 +125,7 @@ export default function Conversations(props: ConversationPropsType) {
   const onChangeHandler = (message: string) => {
     setChatMessage(message);
     if (message.length === 0) {
-      socket.emit(
-        "typing_status",
-        activeConversation.conversationId,
-        conversation[conversation.length - 1].message
-      );
+      socket.emit("typing_status", activeConversation.conversationId, conversation[conversation.length - 1].message);
       return;
     }
     socket.emit("typing_status", activeConversation.conversationId, "Typing");
@@ -147,31 +133,23 @@ export default function Conversations(props: ConversationPropsType) {
 
   return (
     <div className="h-full">
-      <div className="w-100 flex justify-between px-5 border py-4 border-gray-200">
+      <div className="w-100 flex justify-between border border-gray-200 px-5 py-4">
         <div className="flex">
-          <ProfileImg
-            image={props.conversation.user.image}
-            name={props.conversation.user.name}
-          />
-          <h3 className="text-lg font-bold">
-            {props.conversation.user.name}
-          </h3>
+          <ProfileImg image={props.conversation.user.image} name={props.conversation.user.name} />
+          <h3 className="text-lg font-bold">{props.conversation.user.name}</h3>
         </div>
 
-        <PhoneArrowUpRightIcon className="w-10 bg-secondary text-white p-2 rounded hover:cursor-pointer" />
+        <PhoneArrowUpRightIcon className="w-10 rounded bg-secondary p-2 text-white hover:cursor-pointer" />
       </div>
-      <div className="bg-gray-100 h-[94%] px-5 relative rounded-sm">
-        <div
-          className="h-[91%] overflow-y-auto scrollbar pr-3"
-          ref={messagesEndRef}
-        >
+      <div className="relative h-[94%] rounded-sm bg-gray-100 px-5">
+        <div className="h-[91%] overflow-y-auto pr-3 scrollbar" ref={messagesEndRef}>
           {conversation?.map((el, key) => (
             <div key={key}>
               {el.sender === user.id ? (
-                <div className="justify-end flex my-3 place-items-start">
+                <div className="my-3 flex place-items-start justify-end">
                   <div className="flex flex-col items-end">
                     <p className="pr-1 text-right">{user.name}</p>
-                    <p className=" bg-secondary text-white rounded-tl-lg rounded-b-lg p-2 pl-3 whitespace-pre-wrap break-all max-w-[400px]">
+                    <p className=" max-w-[400px] whitespace-pre-wrap break-all rounded-b-lg rounded-tl-lg bg-secondary p-2 pl-3 text-white">
                       {el.message}
                     </p>
                   </div>
@@ -180,15 +158,13 @@ export default function Conversations(props: ConversationPropsType) {
                   </div>
                 </div>
               ) : (
-                <div className="justify-start flex my-3 place-items-start">
+                <div className="my-3 flex place-items-start justify-start">
                   <div className="mr-2 pt-5">
                     <ProfileImg image="" name={props.conversation.user.name} />
                   </div>
                   <div>
                     <p className="pl-1">{props.conversation.user.name}</p>
-                    <p className=" bg-gray-300 rounded-tr-lg rounded-b-lg p-2 pr-3 w-fit whitespace-pre-wrap break-all max-w-[400px]">
-                      {el.message}
-                    </p>
+                    <p className=" w-fit max-w-[400px] whitespace-pre-wrap break-all rounded-b-lg rounded-tr-lg bg-gray-300 p-2 pr-3">{el.message}</p>
                   </div>
                 </div>
               )}
@@ -196,23 +172,20 @@ export default function Conversations(props: ConversationPropsType) {
           ))}
         </div>
         <form
-          className="absolute left-0 bottom-0 justify-center flex w-full"
+          className="absolute bottom-0 left-0 flex w-full justify-center"
           onSubmit={(e) => sendMessage(e)}
           onKeyDown={(e) => (e.key === "Enter" ? sendMessage(e) : "")}
         >
           <textarea
-            className="focus:outline-none focus:shadow-secondary px-3 py-2 w-full border border-r-0 border-violet-100 resize-none overflow-hidden"
+            className="w-full resize-none overflow-hidden border border-r-0 border-violet-100 px-3 py-2 focus:shadow-secondary focus:outline-none"
             placeholder="Write a message..."
             value={chatMessage}
             onChange={(e) => onChangeHandler(e.target.value)}
             onClick={() => setShowEmoji(false)}
             contentEditable={true}
           />
-          <div className="relative bg-white focus:shadow-secondary text-secondary border-y pr-1 flex">
-            <FaceSmileIcon
-              className="w-8 items-center hover:cursor-pointer "
-              onClick={() => setShowEmoji(!showEmoji)}
-            />
+          <div className="relative flex border-y bg-white pr-1 text-secondary focus:shadow-secondary">
+            <FaceSmileIcon className="w-8 items-center hover:cursor-pointer " onClick={() => setShowEmoji(!showEmoji)} />
             <div className=" absolute bottom-16 right-0">
               <EmojiPicker
                 open={showEmoji}
@@ -224,10 +197,7 @@ export default function Conversations(props: ConversationPropsType) {
             </div>
           </div>
 
-          <button
-            type="submit"
-            className=" bg-secondary text-white px-7 py-2 rounded-sm"
-          >
+          <button type="submit" className=" rounded-sm bg-secondary px-7 py-2 text-white">
             <PaperAirplaneIcon className="h-6" />
           </button>
         </form>

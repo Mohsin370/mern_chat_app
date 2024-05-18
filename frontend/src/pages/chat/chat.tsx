@@ -45,8 +45,6 @@ const Chat = () => {
     };
   }, [user.id]);
 
-
-
   return (
     <div className="h-dvh overflow-hidden">
       <MessageModule></MessageModule>

@@ -6,29 +6,29 @@ import { ArrowRightIcon } from "@heroicons/react/16/solid";
 export default function landing() {
   return (
     <article className="pros prose-xl">
-      <div className="flex flex-col max-h-dvh mx-auto w-11/12 overflow-hidden">
+      <div className="mx-auto flex max-h-dvh w-11/12 flex-col overflow-hidden">
         <Header />
-        <div className="xl:grid grid-cols-2 items-center md:my-10">
-          <div className="xl:block flex flex-col justify-center items-center">
+        <div className="grid-cols-2 items-center md:my-10 xl:grid">
+          <div className="flex flex-col items-center justify-center xl:block">
             <h1 className="font-gilroy-bold text-primary">
               Slick Chats
               <br />
               Big laughs
             </h1>
-            <p className="text-primary-light text-center md:text-left">
+            <p className="text-center text-primary-light md:text-left">
               Revolutionize web connections for all. Modern design, <br /> endless connections, boundless communication.
             </p>
             <Link to="/login">
-              <button className="rounded-2xl bg-violet-100 flex justify-between items-center h-20 w-52">
-                <span className="font-bold px-4">Let's Ping</span>
-                <div className="bg-secondary rounded-2xl p-7 transform transition-transform ease-in-out duration-500 hover:translate-x-6 ">
-                  <ArrowRightIcon className=" text-white h-6" />
+              <button className="flex h-20 w-52 items-center justify-between rounded-2xl bg-violet-100">
+                <span className="px-4 font-bold">Let's Ping</span>
+                <div className="transform rounded-2xl bg-secondary p-7 transition-transform duration-500 ease-in-out hover:translate-x-6 ">
+                  <ArrowRightIcon className=" h-6 text-white" />
                 </div>
               </button>
             </Link>
           </div>
-          <div className="m-auto xl:w-full md:w-2/3">
-            <img className="hidden md:block m-auto" src={landingSVG} alt="landing" />
+          <div className="m-auto md:w-2/3 xl:w-full">
+            <img className="m-auto hidden md:block" src={landingSVG} alt="landing" />
           </div>
         </div>
       </div>

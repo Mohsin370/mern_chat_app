@@ -22,12 +22,12 @@ export default function ProfileImg(props: propsType) {
     <div>
       {props.image}
       {props.image ? (
-        <img className="rounded-full w-10 h-10 mr-3" src={props.image} alt="user" onClick={nameInitials} />
+        <img className="mr-3 h-10 w-10 rounded-full" src={props.image} alt="user" onClick={nameInitials} />
       ) : (
         <div className="flex">
-          <span className=" relative text-center text-white bg-secondary w-10 h-10 p-2 mr-1 rounded-full">
+          <span className=" relative mr-1 h-10 w-10 rounded-full bg-secondary p-2 text-center text-white">
             {nameInitials()}
-            {props.online && <div className=" bg-green-500 w-2 h-2 rounded-full absolute right-1 bottom-0.5 border border-white"></div>}
+            {props.online && <div className=" absolute bottom-0.5 right-1 h-2 w-2 rounded-full border border-white bg-green-500"></div>}
           </span>
         </div>
       )}
