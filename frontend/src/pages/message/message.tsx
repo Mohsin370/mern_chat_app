@@ -118,7 +118,7 @@ export const MessageModule = () => {
       };
     }
 
-    if (conversation._id === selectedConversation?._id) return;
+    if (conversation._id === selectedConversation?._id && conversation._id) return;
     setSelectedConversation(conversation);
     const newActiveConversation = {
       receiver: user._id,
