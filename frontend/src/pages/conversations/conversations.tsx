@@ -172,7 +172,7 @@ export default function Conversations(props: ConversationPropsType) {
           ))}
         </div>
         <form
-          className="absolute bottom-0 left-0 flex w-full justify-center h-16"
+          className="absolute bottom-0 left-0 flex h-16 w-full justify-center"
           onSubmit={(e) => sendMessage(e)}
           onKeyDown={(e) => (e.key === "Enter" ? sendMessage(e) : "")}
         >
@@ -183,6 +183,7 @@ export default function Conversations(props: ConversationPropsType) {
             onChange={(e) => onChangeHandler(e.target.value)}
             onClick={() => setShowEmoji(false)}
             contentEditable={true}
+            suppressContentEditableWarning={true}
           />
           <div className="relative flex border-y bg-white pr-1 text-secondary focus:shadow-secondary">
             <FaceSmileIcon className="w-8 items-center hover:cursor-pointer " onClick={() => setShowEmoji(!showEmoji)} />

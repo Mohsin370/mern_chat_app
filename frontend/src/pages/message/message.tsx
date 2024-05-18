@@ -34,6 +34,7 @@ type socketMessage = {
   sender: string;
   receiver: string;
   conversationId: string;
+  receiverSocketId: string;
 };
 
 export const MessageModule = () => {
@@ -74,6 +75,10 @@ export const MessageModule = () => {
     });
     getUserConversations();
   }, [activeConversation, selectedConversation]);
+
+  socket.on("receive_message", () => {
+    getUserConversations();
+  });
 
   useEffect(() => {
     const updatedUsers = users.map((user: User) => {
