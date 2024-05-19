@@ -41,7 +41,6 @@ export const MessageModule = () => {
   const { user, setUser } = useContext(AuthContext);
   const { activeConversation, setActiveConversation, onlineUsers } = useContext(ChatContext);
   const [users, setUsers] = useState<User[]>([]);
-  // const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation<User>>();
   const navigate = useNavigate();
 
@@ -62,35 +61,38 @@ export const MessageModule = () => {
   });
 
   useEffect(() => {
-    GetAllUsers(user.id).then((res: AxiosResponse) => {
-      if (res.data.success) {
-        res.data.users.map((user: User) => {
-          if (onlineUsers.find((ou) => user._id === ou.userId)) {
-            user.online = true;
-          }
-        });
 
-        setUsers(res.data.users);
-      }
+    socket.on("receive_message", () => {
+      getUserConversations();
     });
     getUserConversations();
   }, [activeConversation, selectedConversation]);
 
-  socket.on("receive_message", () => {
-    getUserConversations();
-  });
-
   useEffect(() => {
-    const updatedUsers = users.map((user: User) => {
-      if (onlineUsers.find((ou) => user._id === ou.userId)) {
-        user.online = true;
-      } else {
-        user.online = false;
-      }
-      return user;
-    });
+    if (users.length === 0) {
+      GetAllUsers(user.id).then((res: AxiosResponse) => {
+        if (res.data.success) {
+          res.data.users.map((user: User) => {
+            if (onlineUsers.find((ou) => user._id === ou.userId)) {
+              user.online = true;
+            }
+          });
 
-    setUsers(updatedUsers);
+          setUsers(res.data.users);
+        }
+      });
+    } else {
+      const updatedUsers = users.map((user: User) => {
+        if (onlineUsers.find((ou) => user._id === ou.userId)) {
+          user.online = true;
+        } else {
+          user.online = false;
+        }
+        return user;
+      });
+
+      setUsers(updatedUsers);
+    }
   }, [onlineUsers]);
 
   const getUserConversations = () => {

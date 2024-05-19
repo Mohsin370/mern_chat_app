@@ -5,6 +5,7 @@ const socketMiddlware = (socket: any, next: NextFunction) => {
   console.log("userID for registration: ", userId);
   if (!userId) {
     // return next(new Error("invalid_user"));
+    socket.disconnect();
     return;
   }
   socket.userId = userId;
