@@ -69,7 +69,7 @@ export const MessageModule = () => {
   }, [activeConversation, selectedConversation]);
 
   useEffect(() => {
-    if (users.length === 0) {
+    if (allUsers.length === 0) {
       GetAllUsers(user.id).then((res: AxiosResponse) => {
         if (res.data.success) {
           res.data.users.map((user: User) => {
@@ -83,7 +83,7 @@ export const MessageModule = () => {
         }
       });
     } else {
-      const updatedUsers = users.map((user: User) => {
+      const updatedUsers = allUsers.map((user: User) => {
         if (onlineUsers.find((ou) => user._id === ou.userId)) {
           user.online = true;
         } else {
