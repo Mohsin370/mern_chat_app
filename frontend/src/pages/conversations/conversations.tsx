@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import ProfileImg from "../../components/profileImg";
-import { PaperAirplaneIcon, FaceSmileIcon } from "@heroicons/react/16/solid";
+import { PaperAirplaneIcon, FaceSmileIcon, PhoneArrowUpRightIcon } from "@heroicons/react/24/outline";
 import { SendMessage } from "../../api/chat";
 import { AuthContext } from "../../context/auth/authContext";
 import { AxiosError } from "axios";
 import { GetConversations } from "../../api/conversations";
 import { ChatContext } from "../../context/chat/chatContext";
 import socket from "../../config/socketConfig";
+import EmojiPicker from "emoji-picker-react";
 
 type User = {
   name: string;
@@ -38,6 +39,7 @@ export default function Conversations(props: ConversationPropsType) {
   const { user } = useContext(AuthContext);
   const { activeConversation, setActiveConversation, onlineUsers } = useContext(ChatContext);
   const [conversation, setConversation] = useState<Message[]>([]);
+  const [showEmoji, setShowEmoji] = useState<boolean>(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -51,6 +53,7 @@ export default function Conversations(props: ConversationPropsType) {
   useEffect(() => {
     getConversations(activeConversation.conversationId);
     setChatMessage("");
+    setShowEmoji(false);
     console.log(socket.id);
 
     socket.on("receive_message", (messageData) => {
@@ -60,16 +63,10 @@ export default function Conversations(props: ConversationPropsType) {
     });
 
     return () => {
-      setConversation([
-        {
-          message: "",
-          sender: "",
-          receiver: "",
-        },
-      ]);
+      setConversation([]);
       socket.off("receive_message");
     };
-  }, [activeConversation, socket, onlineUsers]);
+  }, [activeConversation]);
 
   useEffect(() => {
     scrollToBottom();
@@ -113,7 +110,7 @@ export default function Conversations(props: ConversationPropsType) {
               receiver: activeConversation.receiver,
             });
           }
-          console.log("message sent");
+          console.log("message sent to: ", messageData);
           socket.emit("send_message", messageData);
         }
       })
@@ -122,6 +119,7 @@ export default function Conversations(props: ConversationPropsType) {
       });
 
     setChatMessage("");
+    setShowEmoji(false);
   };
 
   const onChangeHandler = (message: string) => {
@@ -133,56 +131,74 @@ export default function Conversations(props: ConversationPropsType) {
     socket.emit("typing_status", activeConversation.conversationId, "Typing");
   };
 
-  const showEmojis = () => {};
-
   return (
-    <div className="h-full px-2">
-      <div className="w-100 flex px-5">
-        <ProfileImg image={props.conversation.user.image} name={props.conversation.user.name} />
-        <h3 className=" text-3xl font-bold">{props.conversation.user.name}</h3>
-      </div>
-      <hr className="my-4" />
+    <div className="h-full sm:h-dvh">
+      <div className="flex justify-between border border-gray-200 px-5 py-4">
+        <div className="flex">
+          <ProfileImg image={props.conversation.user.image} name={props.conversation.user.name} />
+          <h3 className="text-lg font-bold">{props.conversation.user.name}</h3>
+        </div>
 
-      <div className="bg-gray-100 h-[94%] px-5 py-5 relative rounded-sm">
-        <div className="h-[90%] overflow-y-auto scrollbar pr-3" ref={messagesEndRef}>
+        <PhoneArrowUpRightIcon className="w-10 rounded bg-secondary p-2 text-white hover:cursor-pointer" />
+      </div>
+      <div className="relative h-[94%] rounded-sm bg-gray-100 px-5">
+        <div className="h-[calc(100%-70px)] overflow-y-auto pr-3 scrollbar" ref={messagesEndRef}>
           {conversation?.map((el, key) => (
             <div key={key}>
               {el.sender === user.id ? (
-                <div className="justify-end flex my-3 place-items-start">
+                <div className="my-3 flex place-items-start justify-end">
                   <div className="flex flex-col items-end">
                     <p className="pr-1 text-right">{user.name}</p>
-                    <p className=" bg-secondary text-white rounded p-2 whitespace-pre-wrap break-all max-w-[400px]">{el.message}</p>
+                    <p className=" max-w-[400px] whitespace-pre-wrap break-all rounded-b-lg rounded-tl-lg bg-secondary p-2 pl-3 text-white">
+                      {el.message}
+                    </p>
                   </div>
                   <div className="ml-2 pt-5">
                     <ProfileImg image="" name={user.name} />
                   </div>
                 </div>
               ) : (
-                <div className="justify-start flex my-3 place-items-start">
+                <div className="my-3 flex place-items-start justify-start">
                   <div className="mr-2 pt-5">
                     <ProfileImg image="" name={props.conversation.user.name} />
                   </div>
                   <div>
                     <p className="pl-1">{props.conversation.user.name}</p>
-                    <p className=" bg-gray-300 rounded p-2 w-fit whitespace-pre-wrap break-all max-w-[400px]">{el.message}</p>
+                    <p className=" w-fit max-w-[400px] whitespace-pre-wrap break-all rounded-b-lg rounded-tr-lg bg-gray-300 p-2 pr-3">{el.message}</p>
                   </div>
                 </div>
               )}
             </div>
           ))}
         </div>
-        <form className="absolute left-0 bottom-0 justify-center flex w-full" onSubmit={(e) => sendMessage(e)}>
+        <form
+          className="absolute bottom-0 left-0 flex h-16 w-full justify-center"
+          onSubmit={(e) => sendMessage(e)}
+          onKeyDown={(e) => (e.key === "Enter" ? sendMessage(e) : "")}
+        >
           <textarea
-            className="focus:outline-none focus:shadow-secondary px-3 py-2 w-full border border-r-0 border-violet-100 resize-none overflow-hidden"
+            className="w-full resize-none overflow-hidden border border-r-0 border-violet-100 px-3 py-2 focus:shadow-secondary focus:outline-none"
             placeholder="Write a message..."
             value={chatMessage}
             onChange={(e) => onChangeHandler(e.target.value)}
+            onClick={() => setShowEmoji(false)}
+            contentEditable={true}
+            suppressContentEditableWarning={true}
           />
-          <div className="bg-white focus:shadow-secondary text-secondary border-y pr-1 flex">
-            <FaceSmileIcon className="w-8 items-center hover:cursor-pointer " onClick={showEmojis} />
+          <div className="relative flex border-y bg-white pr-1 text-secondary focus:shadow-secondary">
+            <FaceSmileIcon className="w-8 items-center hover:cursor-pointer " onClick={() => setShowEmoji(!showEmoji)} />
+            <div className=" absolute bottom-16 right-0">
+              <EmojiPicker
+                open={showEmoji}
+                onEmojiClick={(el) => {
+                  console.log(chatMessage);
+                  setChatMessage(chatMessage + el.emoji);
+                }}
+              />
+            </div>
           </div>
-          {/* <EmojiPicker className="absolute top-0 left-0"></EmojiPicker> */}
-          <button type="submit" className=" bg-secondary text-white px-7 py-2 rounded-sm">
+
+          <button type="submit" className=" rounded-sm bg-secondary px-7 py-2 text-white">
             <PaperAirplaneIcon className="h-6" />
           </button>
         </form>

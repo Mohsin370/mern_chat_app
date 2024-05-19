@@ -39,7 +39,7 @@ export default function Login() {
             email: res.data.user.email,
             token: res.data.user.token,
           });
-          
+
           localStorage.setItem("user", JSON.stringify(res.data.user));
 
           navigate("/chat");
@@ -71,25 +71,37 @@ export default function Login() {
 
   return (
     <article className="pros prose-xl">
-      <div className="lg:w-3/4 mx-auto w-11/12">
-        <div className="sm:flex flex-wrap flex-col justify-center min-h-screen items-center ">
-          <div className="py-10 sm:shadow-xl sm:p-32 text-center rounded">
-            <Link to="/" className="text-5xl font-gilroy-bold cursor-pointer text-secondary">
+      <div className="mx-auto w-11/12 lg:w-3/4">
+        <div className="min-h-screen flex-col flex-wrap items-center justify-center sm:flex ">
+          <div className="rounded py-10 text-center sm:p-32 sm:shadow-xl">
+            <Link to="/" className="cursor-pointer font-gilroy-bold text-5xl text-secondary">
               Ping
             </Link>
             <h3>Welcome Back</h3>
             <h4>Please enter your login details.</h4>
             <Formik initialValues={{ email: "", password: "" }} onSubmit={(values) => userLogin(values)} validationSchema={loginSchema}>
               {({ errors, touched }) => (
-                <Form className="flex flex-wrap flex-col justify-center items-center mb-3">
-                  <Field className="w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" type="text" name="email" placeholder="Email" autoComplete="email" />
-                  {touched.email && errors.email && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.email}</div>}
-                  <Field className=" w-5/6 sm:w-full shadow p-2 m-3 border text-gray-700 focus:outline-none focus:shadow-secondary-light" type="password" autoComplete="current-password" name="password" placeholder="Password" />
-                  {touched.password && errors.password && <div className="w-5/6 sm:w-full text-red-600 text-left">{errors.password}</div>}
-                  <Link to="/forgot-password" className="text-secondary text-lg py-2">
+                <Form className="mb-3 flex flex-col flex-wrap items-center justify-center">
+                  <Field
+                    className="m-3 w-5/6 border p-2 text-gray-700 shadow focus:shadow-secondary-light focus:outline-none sm:w-full"
+                    type="text"
+                    name="email"
+                    placeholder="Email"
+                    autoComplete="email"
+                  />
+                  {touched.email && errors.email && <div className="w-5/6 text-left text-red-600 sm:w-full">{errors.email}</div>}
+                  <Field
+                    className=" m-3 w-5/6 border p-2 text-gray-700 shadow focus:shadow-secondary-light focus:outline-none sm:w-full"
+                    type="password"
+                    autoComplete="current-password"
+                    name="password"
+                    placeholder="Password"
+                  />
+                  {touched.password && errors.password && <div className="w-5/6 text-left text-red-600 sm:w-full">{errors.password}</div>}
+                  <Link to="/forgot-password" className="py-2 text-lg text-secondary">
                     Forgot Password?
                   </Link>
-                  <button type="submit" className="bg-secondary text-white py-2 px-8 rounded-sm m-3">
+                  <button type="submit" className="m-3 rounded-sm bg-secondary px-8 py-2 text-white">
                     Login
                   </button>
                 </Form>
@@ -104,7 +116,7 @@ export default function Login() {
           </div>
         </div>
       </div>
-      <Outlet/>
+      <Outlet />
     </article>
   );
 }

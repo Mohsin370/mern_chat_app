@@ -8,6 +8,8 @@ import { GetUserConversations } from "../../api/conversations";
 import { AuthContext } from "../../context/auth/authContext";
 import { ChatContext } from "../../context/chat/chatContext";
 import socket from "../../config/socketConfig";
+import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/16/solid";
+import { useNavigate } from "react-router-dom";
 
 type User = {
   name: string;
@@ -24,6 +26,7 @@ interface Conversation<User> {
   updatedAt: string;
   __v: number;
   user: User;
+  lastMessage?: string;
 }
 
 type socketMessage = {
@@ -31,14 +34,16 @@ type socketMessage = {
   sender: string;
   receiver: string;
   conversationId: string;
+  receiverSocketId: string;
 };
 
 export const MessageModule = () => {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const { activeConversation, setActiveConversation, onlineUsers } = useContext(ChatContext);
-  const [users, setUser] = useState<User[]>([]);
-  // const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation<User>>();
+  const navigate = useNavigate();
 
   const [chatTabs, setChatTabs] = useState<Conversation<User>[]>([]);
 
@@ -57,19 +62,40 @@ export const MessageModule = () => {
   });
 
   useEffect(() => {
-    GetAllUsers(user.id).then((res: AxiosResponse) => {
-      if (res.data.success) {
-        res.data.users.map((user: User) => {
-          if (onlineUsers.find((ou) => user._id === ou.userId)) {
-            user.online = true;
-          }
-        });
-
-        setUser(res.data.users);
-      }
+    socket.on("receive_message", () => {
+      getUserConversations();
     });
     getUserConversations();
-  }, [activeConversation, selectedConversation, onlineUsers]);
+  }, [activeConversation, selectedConversation]);
+
+  useEffect(() => {
+    if (allUsers.length === 0) {
+      GetAllUsers(user.id).then((res: AxiosResponse) => {
+        if (res.data.success) {
+          res.data.users.map((user: User) => {
+            if (onlineUsers.find((ou) => user._id === ou.userId)) {
+              user.online = true;
+            }
+          });
+
+          setUsers(res.data.users);
+          setAllUsers(res.data.users);
+        }
+      });
+    } else {
+      const updatedUsers = allUsers.map((user: User) => {
+        if (onlineUsers.find((ou) => user._id === ou.userId)) {
+          user.online = true;
+        } else {
+          user.online = false;
+        }
+        return user;
+      });
+
+      setAllUsers(updatedUsers);
+      setUsers(updatedUsers);
+    }
+  }, [onlineUsers]);
 
   const getUserConversations = () => {
     GetUserConversations(user.id).then((res: AxiosResponse) => {
@@ -101,7 +127,7 @@ export const MessageModule = () => {
       };
     }
 
-    if (conversation._id === selectedConversation?._id) return;
+    if (conversation._id === selectedConversation?._id && conversation._id) return;
     setSelectedConversation(conversation);
     const newActiveConversation = {
       receiver: user._id,
@@ -109,24 +135,53 @@ export const MessageModule = () => {
     };
     setActiveConversation(newActiveConversation);
   };
+  const logout = () => {
+    localStorage.removeItem("user");
+    setUser({
+      name: "",
+      email: "",
+      id: "",
+      token: "",
+    });
+    navigate("/");
+  };
+
+  const searchUsers = (input: string) => {
+    if (!input) {
+      setUsers(allUsers);
+      return;
+    }
+    const searchedUsers = allUsers.filter((user) => user.name.toLowerCase().startsWith(input.toLowerCase()));
+    if (searchedUsers.length > 0) {
+      setUsers(searchedUsers);
+    } else {
+      setUsers(allUsers);
+    }
+  };
 
   return (
-    <div className="m-auto w-[95%] flex h-5/6 px-2 my-10">
-      <div className="w-full md: max-w-sm mr-2 flex flex-col">
-        <div className="flex items-center justify-between py-auto my-5">
-          <h5 className=" font-extrabold text-2xl">Messages</h5>
-          <span className="cursor-pointer">...</span>
+    <div className="flex-col-2 m-auto flex h-full divide-x divide-secondary-light">
+      <div className={`${selectedConversation ? "hidden md:block" : "block"} flex w-full flex-col px-5 md:max-w-sm`}>
+        <div className="py-auto my-5 flex items-center justify-between">
+          <h5 className=" text-2xl font-extrabold">Messages</h5>
+          <span className="cursor-pointer">
+            <ArrowLeftEndOnRectangleIcon className="w-10 text-secondary" onClick={logout} />
+          </span>
         </div>
         <div>
-          <input className="bg-slate-100 w-full rounded px-2 py-2 focus:outline-none focus:shadow-secondary-light" placeholder="Search..." />
+          <input
+            className="w-full rounded bg-slate-100 px-2 py-2 focus:shadow-secondary-light focus:outline-none"
+            placeholder="Search..."
+            onChange={(e) => searchUsers(e.target.value)}
+          />
         </div>
-        <div className="flex justify-between items-center mt-4">
-          <h4 className="font-bold text-xl">Online now</h4>
+        <div className="mt-4 flex items-center justify-between">
+          <h4 className="text-xl font-bold">Users</h4>
           <h4 className="text-secondary">All</h4>
         </div>
-        <div className="py-4 overflow-x-auto overflow-y-hidden whitespace-nowrap scrollbar">
+        <div className="overflow-x-auto overflow-y-hidden whitespace-nowrap py-4 scrollbar">
           {users.map((user, key) => (
-            <div className="inline-block cursor-pointer mb-2" onClick={() => findUserConversation(user)} key={key}>
+            <div className="mb-2 inline-block cursor-pointer" onClick={() => findUserConversation(user)} key={key}>
               <ProfileImg image={user.image} name={user.name} online={user.online} />
             </div>
           ))}
@@ -134,18 +189,22 @@ export const MessageModule = () => {
 
         <hr className="my-4" />
 
-        <div className="mt-6 overflow-x-auto h-full scrollbar">
+        <div className="mt-6 h-full overflow-x-auto scrollbar">
           {chatTabs?.map((tab, key) => {
             return (
-              <div className={`px-2  cursor-pointer pt-2 rounded-md ${activeConversation.conversationId === tab._id ? "bg-gray-100 " : ""} `} key={key} onClick={() => selectConversation(tab)}>
-                <ChatTab name={tab.user.name} time={""} image={tab.user.image} lastMsg={""} typing={tab.user.typing} />
+              <div
+                className={`cursor-pointer  rounded-md px-2 pt-2 ${activeConversation.conversationId === tab._id ? "bg-violet-400 text-white" : ""} `}
+                key={key}
+                onClick={() => selectConversation(tab)}
+              >
+                <ChatTab name={tab.user.name} time={""} image={tab.user.image} lastMsg={tab.lastMessage ?? ""} typing={tab.user.typing} />
               </div>
             );
           })}
         </div>
       </div>
       {selectedConversation && (
-        <div className="hidden md:block w-full pb-5">
+        <div className="w-full pb-5">
           <Conversations conversation={selectedConversation} />
         </div>
       )}
