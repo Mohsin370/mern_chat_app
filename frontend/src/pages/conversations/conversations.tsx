@@ -8,6 +8,7 @@ import { GetConversations } from "../../api/conversations";
 import { ChatContext } from "../../context/chat/chatContext";
 import socket from "../../config/socketConfig";
 import EmojiPicker from "emoji-picker-react";
+import VideoCall from "../../components/videoCall";
 
 type User = {
   name: string;
@@ -40,6 +41,7 @@ export default function Conversations(props: ConversationPropsType) {
   const { activeConversation, setActiveConversation, onlineUsers } = useContext(ChatContext);
   const [conversation, setConversation] = useState<Message[]>([]);
   const [showEmoji, setShowEmoji] = useState<boolean>(false);
+  const [startCall, setStartCall] = useState<boolean>(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -131,6 +133,8 @@ export default function Conversations(props: ConversationPropsType) {
     socket.emit("typing_status", activeConversation.conversationId, "Typing");
   };
 
+
+
   return (
     <div className="h-full sm:h-dvh">
       <div className="flex justify-between border border-gray-200 px-5 py-4">
@@ -139,10 +143,11 @@ export default function Conversations(props: ConversationPropsType) {
           <h3 className="text-lg font-bold">{props.conversation.user.name}</h3>
         </div>
 
-        <PhoneArrowUpRightIcon className="w-10 rounded bg-secondary p-2 text-white hover:cursor-pointer" />
+        <PhoneArrowUpRightIcon className="w-10 rounded bg-secondary p-2 text-white hover:cursor-pointer" onClick={()=>setStartCall(true)} />
       </div>
       <div className="relative h-[94%] rounded-sm bg-gray-100 px-5">
         <div className="h-[calc(100%-70px)] overflow-y-auto pr-3 scrollbar" ref={messagesEndRef}>
+          {startCall && <VideoCall/>}
           {conversation?.map((el, key) => (
             <div key={key}>
               {el.sender === user.id ? (
