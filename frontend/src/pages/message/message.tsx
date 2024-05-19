@@ -41,6 +41,7 @@ export const MessageModule = () => {
   const { user, setUser } = useContext(AuthContext);
   const { activeConversation, setActiveConversation, onlineUsers } = useContext(ChatContext);
   const [users, setUsers] = useState<User[]>([]);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation<User>>();
   const navigate = useNavigate();
 
@@ -61,7 +62,6 @@ export const MessageModule = () => {
   });
 
   useEffect(() => {
-
     socket.on("receive_message", () => {
       getUserConversations();
     });
@@ -79,6 +79,7 @@ export const MessageModule = () => {
           });
 
           setUsers(res.data.users);
+          setAllUsers(res.data.users);
         }
       });
     } else {
@@ -91,6 +92,7 @@ export const MessageModule = () => {
         return user;
       });
 
+      setAllUsers(updatedUsers);
       setUsers(updatedUsers);
     }
   }, [onlineUsers]);
@@ -144,6 +146,19 @@ export const MessageModule = () => {
     navigate("/");
   };
 
+  const searchUsers = (input: string) => {
+    if (!input) {
+      setUsers(allUsers);
+      return;
+    }
+    const searchedUsers = allUsers.filter((user) => user.name.toLowerCase().startsWith(input.toLowerCase()));
+    if (searchedUsers.length > 0) {
+      setUsers(searchedUsers);
+    } else {
+      setUsers(allUsers);
+    }
+  };
+
   return (
     <div className="flex-col-2 m-auto flex h-full divide-x divide-secondary-light">
       <div className={`${selectedConversation ? "hidden md:block" : "block"} flex w-full flex-col px-5 md:max-w-sm`}>
@@ -154,7 +169,11 @@ export const MessageModule = () => {
           </span>
         </div>
         <div>
-          <input className="w-full rounded bg-slate-100 px-2 py-2 focus:shadow-secondary-light focus:outline-none" placeholder="Search..." />
+          <input
+            className="w-full rounded bg-slate-100 px-2 py-2 focus:shadow-secondary-light focus:outline-none"
+            placeholder="Search..."
+            onChange={(e) => searchUsers(e.target.value)}
+          />
         </div>
         <div className="mt-4 flex items-center justify-between">
           <h4 className="text-xl font-bold">Online now</h4>
