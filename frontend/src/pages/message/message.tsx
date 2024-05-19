@@ -176,7 +176,7 @@ export const MessageModule = () => {
           />
         </div>
         <div className="mt-4 flex items-center justify-between">
-          <h4 className="text-xl font-bold">Online now</h4>
+          <h4 className="text-xl font-bold">Users</h4>
           <h4 className="text-secondary">All</h4>
         </div>
         <div className="overflow-x-auto overflow-y-hidden whitespace-nowrap py-4 scrollbar">
