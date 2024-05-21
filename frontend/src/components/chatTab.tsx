@@ -18,7 +18,8 @@ const ChatTab = (props: tabProps) => {
       <div className="flex w-full justify-between">
         <div className="flex flex-col">
           <span className="font-bold tracking-wider">{props.name}</span>
-          {props.lastMsg ? <span className="text-xs">{props.lastMsg}</span> : <span className="text-xs text-secondary">{props.typing}</span>}
+          {props.typing}
+          <span className="text-xs">{props.typing ?"Typing...": props.lastMsg}</span> 
         </div>
         <span className="text-xs text-gray-400">{props.time}</span>
       </div>

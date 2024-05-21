@@ -114,6 +114,7 @@ export default function Conversations(props: ConversationPropsType) {
           }
           console.log("message sent to: ", messageData);
           socket.emit("send_message", messageData);
+          socket.emit("typing_status", activeConversation.conversationId, false);
         }
       })
       .catch((error: AxiosError) => {
@@ -127,10 +128,10 @@ export default function Conversations(props: ConversationPropsType) {
   const onChangeHandler = (message: string) => {
     setChatMessage(message);
     if (message.length === 0) {
-      socket.emit("typing_status", activeConversation.conversationId, conversation[conversation.length - 1].message);
+      socket.emit("typing_status", activeConversation.conversationId, false);
       return;
     }
-    socket.emit("typing_status", activeConversation.conversationId, "Typing");
+    socket.emit("typing_status", activeConversation.conversationId, true);
   };
 
 
