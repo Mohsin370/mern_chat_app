@@ -1,9 +1,9 @@
 import { useContext, useEffect, useRef } from "react";
 import { NotificationContext } from "../context/notification/notificationContext";
 
-interface propsType {
-  videoStream: MediaStream;
-}
+// interface propsType {
+//   videoStream: MediaStream;
+// }
 
 const VideoCall = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
