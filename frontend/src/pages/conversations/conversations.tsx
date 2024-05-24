@@ -144,7 +144,7 @@ export default function Conversations(props: ConversationPropsType) {
           <h3 className="text-lg font-bold">{props.conversation.user.name}</h3>
         </div>
 
-        <PhoneArrowUpRightIcon className="w-10 rounded bg-secondary p-2 text-white hover:cursor-pointer" onClick={()=>setStartCall(true)} />
+        <PhoneArrowUpRightIcon className="w-10 rounded bg-secondary p-2 text-white hover:cursor-pointer" onClick={()=>setStartCall(!startCall)} />
       </div>
       <div className="relative h-[94%] rounded-sm bg-gray-100 px-5">
         <div className="h-[calc(100%-70px)] overflow-y-auto pr-3 scrollbar" ref={messagesEndRef}>

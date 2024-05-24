@@ -28,29 +28,34 @@ const VideoCall = () => {
 
   const createPeerConnection = async () => {
     let peerConfiguration = {
-        iceServers:[
-            {
-                urls:[
-                  'stun:stun.l.google.com:19302',
-                  'stun:stun1.l.google.com:19302'
-                ]
-            }
-        ]
+      iceServers: [
+        {
+          urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"],
+        },
+      ],
+    };
+    try {
+      const peerConnection = await new RTCPeerConnection(peerConfiguration);
+      console.log(peerConnection);
+    } catch (error) {
+      console.log(error);
     }
-    const peerConnection = await new RTCPeerConnection(peerConfiguration);
-    console.log(peerConnection);
   };
 
   const makeCall = async () => {
-    const localStream = await getStream();
-    if (videoRef.current && localStream) {
-      videoRef.current.srcObject = localStream;
+    try {
+      const localStream = await getStream();
+      if (videoRef.current && localStream) {
+        videoRef.current.srcObject = localStream;
+      }
+      createPeerConnection();
+    } catch (error) {
+      console.log(error);
     }
-    createPeerConnection();
   };
   useEffect(() => {
     makeCall();
-  });
+  }, []);
 
   return (
     <div className="w-dvh absolute h-dvh">
