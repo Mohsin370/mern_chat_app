@@ -21,6 +21,10 @@ const VideoCall = () => {
     try {
       const stream = await openMediaDevices({ video: true, audio: true });
       setLocalStream(stream); // Set localStream state
+      console.log("Local stream obtained:", stream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream; // Show local stream for debugging
+      }
       return stream;
     } catch (error) {
       setNotification({ message: "Permission request denied!", type: "error", show: true });
@@ -41,9 +45,11 @@ const VideoCall = () => {
     try {
       const pc = new RTCPeerConnection(peerConfiguration);
       stream.getTracks().forEach(track => pc.addTrack(track, stream));
+      console.log("Tracks added to peer connection:", stream.getTracks());
 
       pc.addEventListener("icecandidate", event => {
         if (event.candidate) {
+          console.log("Sending ICE candidate:", event.candidate);
           socket.emit("sendIceCandidateToSignalingServer", {
             iceCandidate: event.candidate,
             receiverSocketId: onlineUsers.find(user => user.userId === activeConversation.receiver)?.socketId,
@@ -52,7 +58,10 @@ const VideoCall = () => {
       });
 
       pc.addEventListener("track", event => {
+        console.log("Received remote tracksssssssss:", event.streams[0]);
         event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track));
+        console.log("helo::::::::::::::::::::::::");
+        
         if (videoRef.current) {
           videoRef.current.srcObject = remoteStream;
         }
@@ -76,6 +85,7 @@ const VideoCall = () => {
     try {
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
+      console.log("Sending offer:", offer);
       socket.emit("sendOfferToSignalingServer", {
         offer,
         receiverSocketId: onlineUsers.find(user => user.userId === activeConversation.receiver)?.socketId,
@@ -87,14 +97,16 @@ const VideoCall = () => {
   };
 
   const handleReceiveOffer = async (data: any) => {
-    const stream = localStream;
+    console.log("Received offer:", data.offer);
+    const stream = await getStream();
     const pc = peerConnection || createPeerConnection(stream);
     if (!pc) return;
 
     try {
-      await pc.setRemoteDescription(data.offer);
+      await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
+      console.log("Sending answer:", answer);
       socket.emit("sendAnswerToSignalingServer", {
         answer,
         receiverSocketId: onlineUsers.find(user => user.userId === activeConversation.receiver)?.socketId,
@@ -105,10 +117,12 @@ const VideoCall = () => {
   };
 
   const handleReceiveAnswer = async (data: any) => {
+    console.log("Received answer:", data.answer);
     const pc = peerConnection;
     if (!pc) return;
 
     try {
+      console.log("Received answer:", data.answer);
       await pc.setRemoteDescription(data.answer);
     } catch (error) {
       console.error("Error handling received answer:", error);
@@ -128,7 +142,7 @@ const VideoCall = () => {
   }, [activeConversation, onlineUsers]); // Ensure proper cleanup
 
   return (
-    <div className="w-dvh absolute h-dvh">
+    <div className="w-dvh absolute w-100 z-20 left-0 right-0 ml-auto mr-auto flex items-center">
       <video controls ref={videoRef} autoPlay playsInline></video>
     </div>
   );
