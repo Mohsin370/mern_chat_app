@@ -64,7 +64,7 @@ export default function Conversations(props: ConversationPropsType) {
       setConversation((prev) => (prev ? [...prev, messageData] : [messageData]));
     });
 
-    socket.on("receiveOfferFromSignalingServer", async (data) => {
+    socket.on("receiveOfferFromSignalingServer", async () => {
       setStartCall(true);
     });
 
