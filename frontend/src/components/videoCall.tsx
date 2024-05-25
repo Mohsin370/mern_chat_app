@@ -98,7 +98,7 @@ const VideoCall = () => {
 
   const handleReceiveOffer = async (data: any) => {
     console.log("Received offer:", data.offer);
-    const stream = await getStream();
+    const stream = localStream || await getStream();
     const pc = peerConnection || createPeerConnection(stream);
     if (!pc) return;
 
