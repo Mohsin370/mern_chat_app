@@ -41,6 +41,7 @@ const VideoCall = () => {
     try {
       const pc = new RTCPeerConnection(peerConfiguration);
       stream.getTracks().forEach(track => pc.addTrack(track, stream));
+
       pc.addEventListener("icecandidate", event => {
         if (event.candidate) {
           socket.emit("sendIceCandidateToSignalingServer", {
@@ -49,10 +50,15 @@ const VideoCall = () => {
           });
         }
       });
+
       pc.addEventListener("track", event => {
         event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track));
+        if (videoRef.current) {
+          videoRef.current.srcObject = remoteStream;
+        }
       });
-      setPeerConnection(pc); // Set peerConnection state
+
+      setPeerConnection(pc);
       return pc;
     } catch (error) {
       console.error("Error creating RTCPeerConnection:", error);
@@ -80,7 +86,7 @@ const VideoCall = () => {
     }
 
     if (videoRef.current) {
-      videoRef.current.srcObject = remoteStream;
+      videoRef.current.srcObject = stream;
     }
   };
 
@@ -123,11 +129,11 @@ const VideoCall = () => {
       socket.off("receiveOfferFromSignalingServer", handleReceiveOffer);
       socket.off("receiveAnswerFromSignalingServer", handleReceiveAnswer);
     };
-  }, [activeConversation, onlineUsers]); 
+  }, [activeConversation, onlineUsers]); // Ensure proper cleanup
 
   return (
     <div className="w-dvh absolute h-dvh">
-      <video controls ref={videoRef}></video>
+      <video controls ref={videoRef} autoPlay playsInline></video>
     </div>
   );
 };
