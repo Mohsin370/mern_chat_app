@@ -25,6 +25,21 @@ const socketIO = (io: any) => {
     socket.on("connect_error", (err: {}) => {
       console.log("Connect error", err);
     });
+
+    socket.on("sendOfferToSignalingServer",({offer, receiverSocketId, senderId}: any)=>{
+      console.log("sendOfferToSignalingServer", receiverSocketId, senderId);
+      socket.to(receiverSocketId).emit("receiveOfferFromSignalingServer",{offer, senderId});
+
+    });
+    socket.on("sendAnswerToSignalingServer",({answer, receiverSocketId, senderId}: any)=>{
+      console.log("sendAnswerToSignalingServer",answer, receiverSocketId, senderId);
+      socket.to(receiverSocketId).emit("receiveAnswerFromSignalingServer", {answer, senderId});
+
+    });
+
+
+
+
   });
 };
 

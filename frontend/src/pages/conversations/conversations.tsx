@@ -64,6 +64,10 @@ export default function Conversations(props: ConversationPropsType) {
       setConversation((prev) => (prev ? [...prev, messageData] : [messageData]));
     });
 
+    socket.on("receiveOfferFromSignalingServer", async (data) => {
+      setStartCall(true);
+    });
+
     return () => {
       setConversation([]);
       socket.off("receive_message");
@@ -134,8 +138,6 @@ export default function Conversations(props: ConversationPropsType) {
     socket.emit("typing_status", activeConversation.conversationId, true);
   };
 
-
-
   return (
     <div className="h-full sm:h-dvh">
       <div className="flex justify-between border border-gray-200 px-5 py-4">
@@ -144,11 +146,11 @@ export default function Conversations(props: ConversationPropsType) {
           <h3 className="text-lg font-bold">{props.conversation.user.name}</h3>
         </div>
 
-        <PhoneArrowUpRightIcon className="w-10 rounded bg-secondary p-2 text-white hover:cursor-pointer" onClick={()=>setStartCall(!startCall)} />
+        <PhoneArrowUpRightIcon className="w-10 rounded bg-secondary p-2 text-white hover:cursor-pointer" onClick={() => setStartCall(!startCall)} />
       </div>
       <div className="relative h-[94%] rounded-sm bg-gray-100 px-5">
         <div className="h-[calc(100%-70px)] overflow-y-auto pr-3 scrollbar" ref={messagesEndRef}>
-          {startCall && <VideoCall/>}
+          {startCall && <VideoCall />}
           {conversation?.map((el, key) => (
             <div key={key}>
               {el.sender === user.id ? (
