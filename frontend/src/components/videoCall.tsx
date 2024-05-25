@@ -84,10 +84,6 @@ const VideoCall = () => {
     } catch (error) {
       console.error("Error making call:", error);
     }
-
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream;
-    }
   };
 
   const handleReceiveOffer = async (data: any) => {
